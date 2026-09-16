@@ -26,11 +26,11 @@ source("analyses/volker.r")         # Example 2: network embeddedness
 │   └── towelData.csv     # Raw data for scheibehenne.r
 ├── functions/
 │   └── compute_joint_complements.r   # Computes joint BFs including complete complement
-├── renv/                 # renv configuration
-│   ├── activate.R        # renv activation script
-│   ├── settings.json     # renv settings
-│   └── .gitignore        # ignores library/
-├── renv.lock             # Locked package versions
+├── renv/                 # renv - package management for reproducibility
+│   ├── activate.R        # Activates isolated R environment on startup
+│   ├── settings.json     # renv configuration
+│   └── .gitignore        # Ignores library/ (auto-generated on restore)
+├── renv.lock             # Locks exact package versions
 └── .Rprofile             # Auto-activates renv
 ```
 
