@@ -1,0 +1,8 @@
+# R environment
+.Rhistory
+.RData
+.Rproj.user/
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
