@@ -29,8 +29,8 @@ source("analyses/volker.r")         # Example 2: network embeddedness
 ├── renv/                 # renv configuration
 │   ├── activate.R        # renv activation script
 │   ├── settings.json     # renv settings
-│   └── .gitignore        # ignores library/ (auto-generated on restore)
-├── renv.lock             # Locked package versions (commit this!)
+│   └── .gitignore        # ignores library/
+├── renv.lock             # Locked package versions
 └── .Rprofile             # Auto-activates renv
 ```
 
