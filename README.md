@@ -1,6 +1,6 @@
 # Bayesian Evidence Synthesis (BES)
 
-Reproducible code for the empirical examples in *"Specifying meaningful hypotheses across studies: Bayesian evidence synthesis revisited"* by Laura Groot and Daniel W. Heck. [[Preprint](link-to-preprint)]
+Reproducible code for the empirical examples in *"Specifying meaningful hypotheses across studies: Bayesian evidence synthesis revisited"* by Laura Groot and Daniel W. Heck. [Preprint link coming soon]
 
 ## Quick Start
 
