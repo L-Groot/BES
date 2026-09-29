@@ -154,32 +154,48 @@ n <- dim(rawData)[1] / 4
 # Create dataframe that is compatible with the 'compute_joint_complements' function
    final_df <- results_df %>%
       select(Study, bf_1u, bf_cu) %>%
-      rename(
-         H1 = bf_1u,
-         Hc = bf_cu) %>%
       mutate(
          P_theta_in_Hc = 0.5
       )
 
 #----------------------------------------------------------------------------------
-# -> BF_10(joint) ≈ 0.0007
+### Compute product BFs
+
+# -> BF_10(joint)
 bf_10 <- prod(results_df$bf_10)
 
-# -> BF_1u(joint) ≈ 0.40
+# -> BF_1u(joint)
 bf_1u <- prod(results_df$bf_1u)
 
-# -> BF_1c(joint) ≈ 3000
+# -> BF_1c(joint)
 bf_1c <- prod(results_df$bf_1c)
 
-# Now compute complete complement
+#----------------------------------------------------------------------------------
+### Compute BF_1c*(joint) by enumeration (Eq. 7)
+
 set.seed(45)
 res <- compute_joint_complements(final_df,
                           replace_0_with = 0.001,
                           round_res = FALSE)
+bf_1c_star_enumeration <- res["BES_c","bf_1u"] / res["BES_c_star","bf_cu_star"] # = BF_1u(joint) / BF_c*u(joint)
 
 
-# -> BF_1c*(joint) ≈ 0.003
-bf_1c_star <- res["BES_c","H1"] / res["BES_c_star","Hc*"] # = BF_1u(joint) / BF_c*u(joint)
+#----------------------------------------------------------------------------------
+### Compute BF_1c*(joint) by simplified expression w. equal weighting (Eq. 8)
+
+T <- nrow(final_df)
+numerator <- 2^T - 1
+denominator <- prod(1 + 1/results_df$bf_1c) - 1
+bf_1c_star_formula_equal <- numerator / denominator
+
+#----------------------------------------------------------------------------------
+### Compute BF_1c*(joint) by simplified expression w. complexity weighting (Eq. 9)
+
+c1 <- 1 - final_df$P_theta_in_Hc   # complexity c_1^(t) of the predicted hypotheses
+
+numerator   <- prod(results_df$bf_1u) * (1 - prod(c1))
+denominator <- 1 - prod(c1 * results_df$bf_1u)
+bf_1c_star_formula_complexity <- numerator / denominator
 
 #----------------------------------------------------------------------------------
 ### Display results
@@ -212,7 +228,9 @@ output_lines <- c(
    paste0("BF_10(joint) ≈ ", fmt2(bf_10), " (", fmtE(bf_10), ")"),
    paste0("BF_1u(joint) ≈ ", fmt2(bf_1u), " (", fmtE(bf_1u), ")"),
    paste0("BF_1c(joint) ≈ ", fmt2(bf_1c), " (", fmtE(bf_1c), ")"),
-   paste0("BF_1c*(joint) ≈ ", fmt2(bf_1c_star), " (", fmtE(bf_1c_star), ")"),
+   paste0("BF_1c*(joint) - enumeration ≈ ", fmt2(bf_1c_star_enumeration), " (", fmtE(bf_1c_star_enumeration), ")"),
+   paste0("BF_1c*(joint) - formula (complexity weighting) ≈ ", fmt2(bf_1c_star_formula_complexity), " (", fmtE(bf_1c_star_formula_complexity), ")"),
+   paste0("BF_1c*(joint) - formula (equal weighting) ≈ ", fmt2(bf_1c_star_formula_equal), " (", fmtE(bf_1c_star_formula_equal), ")"),
    ""
 )
 

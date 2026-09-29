@@ -1,0 +1,282 @@
+---
+title: "Reanalysis of Scheibehenne, Jamil, & Wagenmakers (2016)"
+subtitle: "Hotel towel reuse"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+  pdf_document:
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = "")
+```
+
+# Overview
+
+- Computes joint BFs for the set of experiments reported in from Scheibehenne et al. (2016).
+- Source paper: Scheibehenne, B., Jamil, T., & Wagenmakers, E.-J. (2016). Bayesian Evidence Synthesis Can Reconcile Seemingly Inconsistent Results: The Case of Hotel Towel Reuse. Psychological Science, 27(7), 1043-1046.
+- Each experiment is analyzed as one 2x2 contingency table of counts:
+  - rows: condition (control, social norm)
+  - columns: towel reuse outcome (yes, no)
+- For each study, evidence is computed for:
+  - predicted hypothesis: social norm > control (higher reuse probability)
+  - unconstrained hypothesis
+  - complement: social norm < control
+
+```{r packages, message=FALSE}
+library(BayesFactor)
+library(dplyr)
+library(here)
+
+source(here("functions/compute_joint_complements.r"))
+
+# helper functions for formatting numbers
+fmt2 <- function(x) sprintf("%.2f", x)
+fmt4 <- function(x) sprintf("%.4f", x)
+fmtE <- function(x) sprintf("%.2e", x)
+```
+
+# Data
+
+```{r data}
+rawData <- read.table(
+  here("data/towelData.csv"),
+  header = TRUE,
+  sep = ";",
+  stringsAsFactors = FALSE
+)
+
+# n experiments, each represented by 4 rows (from 2x2 contingency table)
+n <- nrow(rawData) / 4
+
+# Add pooled "Total" 2x2 table as in the original script
+bigTable <- array(rawData$Count, dim = c(2, 2, n))
+total2x2 <- apply(bigTable, 2, rowSums)
+
+totalFrame <- data.frame(
+  Source = rep("Total", 4),
+  AuthorName = rep("Total", 4),
+  Experiment = rep(NA, 4),
+  Year = rep(NA, 4),
+  Group = c("Control", "Social Norm", "Control", "Social Norm"),
+  Towel.Reuse = c("Yes", "Yes", "No", "No"),
+  Count = c(total2x2[1, 1], total2x2[2, 1], total2x2[1, 2], total2x2[2, 2])
+)
+
+rawData <- rbind(rawData, totalFrame)
+```
+
+# Study-specific Bayes factors
+
+```{r study-bfs}
+# Names of experiments
+exList <- unique(rawData$Source)
+
+# Initialize vectors to store study-specific Bayes factors
+bf_1u_vec <- rep(NA_real_, length(exList))
+bf_cu_vec <- rep(NA_real_, length(exList))
+bf_10_vec <- rep(NA_real_, length(exList))
+bf_1c_vec <- rep(NA_real_, length(exList))
+
+# Set seed for reproducibility
+set.seed(45)
+
+# Compute BFs for each experiment
+for (i in seq_along(exList)) {
+
+  # Extract the 2x2 contingency table for the current experiment:
+  # rows = condition (control, social norm), columns = towel reuse (yes, no)
+  thisEx <- rawData[rawData$Source == exList[i], ]
+  table2x2 <- cbind(yes = thisEx[1:2, "Count"], no = thisEx[3:4, "Count"])
+  rownames(table2x2) <- c("control", "socialNorm")
+
+  # Fit the unconstrained model H_u against the null model H_0:
+  # - sampleType = "indepMulti", fixedMargin = "rows": the number of guests per
+  #   condition is fixed, so each condition is an independent binomial with its
+  #   own reuse proportion (theta_c for control, theta_e for social norm)
+  # - priorConcentration = 1: independent uniform Beta(1, 1) priors on theta_c
+  #   and theta_e (as in Scheibehenne et al., 2016, p. 1043)
+  # - H_0 states that both conditions share the same proportion
+  X <- contingencyTableBF(
+    table2x2,
+    sampleType = "indepMulti",
+    fixedMargin = "rows",
+    priorConcentration = 1
+  )
+
+  # Unused draws, kept from the original script: they consume random numbers,
+  # so removing them would change the posterior samples below (and thus the
+  # reported Bayes factors)
+  post_alt  <- posterior(X, iterations = 10000)
+  post_null <- posterior(1 / X, iterations = 10000)
+
+  # BF_u0: evidence for H_u against H_0 (computed analytically by BayesFactor;
+  # X stores it on the log scale)
+  bf_u0 <- exp(as.numeric(X@bayesFactor$bf))
+
+  # Draw 10,000 posterior samples of the two proportions under H_u
+  # (these follow Beta(1 + yes, 1 + no) distributions in each condition)
+  post.result <- BayesFactor::posterior(X, iterations = 10000)
+  idx <- grep("omega", colnames(post.result))
+  theta <- as.data.frame(post.result[, idx])
+  # column 1: theta_c, proportion of towel reuse in the control condition
+  # column 2: theta_e, proportion of towel reuse in the social-norm condition
+
+  # Fit of H_1 (theta_e > theta_c) and of the complement H_c (theta_e < theta_c):
+  # the proportions of posterior samples in agreement with each hypothesis
+  prop.consistent <- mean(theta[, 1] < theta[, 2])
+  prop.complement <- mean(theta[, 1] > theta[, 2])
+
+  # BF_1u = fit / complexity; the complexity is P(theta_e > theta_c) under the
+  # uniform priors, which is 0.5 because the prior is symmetric
+  bf_1u <- prop.consistent / 0.5
+
+  # BF_10 by transitivity: BF_10 = BF_u0 * BF_1u
+  bf_10 <- bf_u0 * bf_1u
+
+  # BF_cu for the complement, with complexity 1 - 0.5 = 0.5;
+  # via BF_c0 = BF_u0 * BF_cu, so BF_cu = BF_c0 / BF_u0 = prop.complement / 0.5
+  bf_c0 <- bf_u0 * prop.complement / 0.5
+  bf_cu <- bf_c0 / bf_u0
+
+  # BF_1c by transitivity: BF_1c = BF_1u / BF_cu
+  bf_1c <- bf_1u / bf_cu
+
+  # Store the study-specific BFs
+  bf_1u_vec[i] <- bf_1u
+  bf_cu_vec[i] <- bf_cu
+  bf_10_vec[i] <- bf_10
+  bf_1c_vec[i] <- bf_1c
+}
+
+# Create data frame with results
+results_df <- data.frame(
+  Study = exList,
+  bf_10 = bf_10_vec,
+  bf_1u = bf_1u_vec,
+  bf_1c = bf_1c_vec,
+  bf_cu = bf_cu_vec
+) %>%
+  filter(Study != "Total")
+
+# Create dataframe with only the relevant columns for the compute_joint_complements function
+final_df <- results_df %>%
+  select(Study, bf_1u, bf_cu) %>%
+  mutate(P_theta_in_Hc = 0.5)
+
+# T = nr of experiments
+T <- nrow(final_df)
+```
+
+```{r study-bfs-table, echo=FALSE}
+knitr::kable(
+  results_df,
+  digits = 3,
+  col.names = c(
+    "Study",
+    "$\\mathrm{BF}_{1,0}^{(t)}$",
+    "$\\mathrm{BF}_{1,u}^{(t)}$",
+    "$\\mathrm{BF}_{1,c}^{(t)}$",
+    "$\\mathrm{BF}_{c,u}^{(t)}$"
+  ),
+  escape = FALSE
+)
+```
+
+# Product Bayes factors
+
+```{r product-bfs}
+bf_10 <- prod(results_df$bf_10)
+bf_1u <- prod(results_df$bf_1u)
+bf_1c <- prod(results_df$bf_1c)
+```
+
+- $\mathrm{BF}_{1,0}^{(\mathrm{joint})} = `r fmtE(bf_10)`$.
+- $\mathrm{BF}_{1,u}^{(\mathrm{joint})} = `r fmt4(bf_1u)`$.
+- $\mathrm{BF}_{1,c}^{(\mathrm{joint})} = `r fmtE(bf_1c)`$.
+
+# BF against complete joint complement
+
+## 1: Enumeration (Eq. 7)
+
+```{r enumeration}
+set.seed(45)
+res <- compute_joint_complements(
+  final_df,
+  replace_0_with = 0.001,
+  round_res = FALSE
+)
+
+# Sanity check: BF_1u(joint) / BF_cu(joint) should equal the product of the BF_1c's
+all.equal(res["BES_c", "bf_1u"] / res["BES_c", "bf_cu"], bf_1c)
+
+bf_1c_star_enumeration <- res["BES_c", "bf_1u"] / res["BES_c_star", "bf_cu_star"]
+```
+
+## 2: Complexity weighting (Eq. 8)
+
+- Check: with $c_1^{(t)} = 0.5$ for all studies, this should be close to equal weighting.
+- Uses $\mathrm{BF}_{1,u}^{(t)}$ and complexities $c_1^{(t)}$.
+
+$$
+\mathrm{BF}^{(\text{joint})}_{1,c^*}
+= \frac{\prod_{t=1}^{T}\mathrm{BF}^{(t)}_{1,u}\,\bigl(1-\prod_{t=1}^{T} c_1^{(t)}\bigr)}
+  {1-\prod_{t=1}^{T} c_1^{(t)}\,\mathrm{BF}^{(t)}_{1,u}}
+$$
+
+```{r complexity-weighting}
+c1 <- 1 - final_df$P_theta_in_Hc
+
+bf_1c_star_formula_complexity <-
+  prod(results_df$bf_1u) * (1 - prod(c1)) / (1 - prod(c1 * results_df$bf_1u))
+```
+
+## 3: Equal weighting (Eq. 9)
+
+- Uses only $\mathrm{BF}_{1,c}^{(t)}$.
+
+$$
+\mathrm{BF}^{(\text{joint})}_{1,c^*}
+= \frac{2^T-1}{\prod_{t=1}^{T}\bigl(1 + 1/\mathrm{BF}^{(t)}_{1,c}\bigr) - 1}
+$$
+
+```{r equal-weighting}
+bf_1c_star_formula_equal <- (2^T - 1) / (prod(1 + 1 / results_df$bf_1c) - 1)
+```
+
+# Summary
+
+```{r summary-table, echo=FALSE}
+knitr::kable(
+  data.frame(
+    Metric = c(
+      "$\\mathrm{BF}_{1,0}^{(\\mathrm{joint})}$",
+      "$\\mathrm{BF}_{1,u}^{(\\mathrm{joint})}$",
+      "$\\mathrm{BF}_{1,c}^{(\\mathrm{joint})}$",
+      "$\\mathrm{BF}_{1,c^*}^{(\\mathrm{joint})}$ (Eq. 7)",
+      "$\\mathrm{BF}_{1,c^*}^{(\\mathrm{joint})}$ (Eq. 8)",
+      "$\\mathrm{BF}_{1,c^*}^{(\\mathrm{joint})}$ (Eq. 9)"
+    ),
+    Value = c(
+      formatC(bf_10, format = "e", digits = 3),
+      formatC(bf_1u, format = "f", digits = 4),
+      formatC(bf_1c, format = "e", digits = 3),
+      formatC(bf_1c_star_enumeration, format = "f", digits = 4),
+      formatC(bf_1c_star_formula_complexity, format = "f", digits = 4),
+      formatC(bf_1c_star_formula_equal, format = "f", digits = 4)
+    ),
+    check.names = FALSE
+  ),
+  col.names = c("", ""),
+  align = c("l", "r"),
+  escape = FALSE
+)
+```
+
+# Session info
+
+```{r session-info}
+sessionInfo()
+```

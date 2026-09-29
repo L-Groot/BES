@@ -80,13 +80,13 @@ table2_ready <- table2_df %>%
     mutate(bf_u1 = 1 / bf_iu) %>%
     # compute BF_cu
     mutate(bf_cu = bf_c1 / bf_u1) %>%
-    # select only relevant columns
-    select(study, bf_iu, bf_cu) %>%
-    # rename for function compatibility
-    rename(Study = study,
-           H1 = bf_iu,
-           Hc = bf_cu) %>%
+    # select only relevant columns and rename for function compatibility
+    select(Study = study,
+           bf_1u = bf_iu,
+           bf_cu) %>%
     # add P(theta in Hc) column
+    # -> prior N(0, Sigma_beta / b) is centered at 0 (Volker, 2022, p. 32),
+    #    so P(theta in Hc) = 1 - c_1 = 0.5 (Volker, 2022, p. 36)
     mutate(P_theta_in_Hc = 0.5)
 
 print(table2_ready)
@@ -94,23 +94,6 @@ print(table2_ready)
 # ============================================================================
 # (2) Compute joint BFs
 # ============================================================================
-
-# BF_1u(joint) ≈ 7.24 (vs 7.27)
-bf_1u <- prod(table2_df$bf_iu)
-
-# BF_1c(joint) ≈ 5.23+11 (vs 5.23+11)
-bf_1c <- prod(table2_df$bf_ic)
-
-# Compute BF_1u(joint), BF_cu(joint) and BF_c*u(joint)
-res <- compute_joint_complements(table2_ready,
-                          replace_0_with = 0.001,
-                          round_res = FALSE)
-
-# check BF_1c(joint): matches column product from original table
-(res["BES_c","H1"] / res["BES_c","Hc"]) # = BF_1u(joint) / BF_cu(joint)
-
-# BF_1c*(joint) ≈ 0.0001
-bf_1c_star <- res["BES_c_star","H1"] / res["BES_c_star","Hc*"]
 
 # Study-specific Bayes factors
 results_df <- table2_df %>%
@@ -121,6 +104,45 @@ results_df <- table2_df %>%
         bf_1c = bf_ic,
         bf_cu = bf_iu / bf_ic
     )
+
+# BF_1u(joint) ≈ 7.24 (vs 7.27)
+bf_1u <- prod(results_df$bf_1u)
+
+# BF_1c(joint) ≈ 5.23e+11 (vs 5.23e+11)
+bf_1c <- prod(results_df$bf_1c)
+
+#----------------------------------------------------------------------------------
+### Compute BF_1c*(joint) by enumeration (Eq. 7)
+
+res <- compute_joint_complements(table2_ready,
+                          replace_0_with = 0.001,
+                          round_res = FALSE)
+
+# check BF_1c(joint): matches column product from original table
+(res["BES_c","bf_1u"] / res["BES_c","bf_cu"]) # = BF_1u(joint) / BF_cu(joint)
+
+# -> BF_1c*(joint) ≈ 7.24
+bf_1c_star_enumeration <- res["BES_c","bf_1u"] / res["BES_c_star","bf_cu_star"] # = BF_1u(joint) / BF_c*u(joint)
+
+#----------------------------------------------------------------------------------
+### Compute BF_1c*(joint) by simplified expression w. equal weighting (Eq. 9)
+
+# -> BF_1c*(joint) ≈ 7.28 (differs from enumeration due to rounding of the
+#    reported BFs: this expression uses only BF_1c, the others use BF_1u)
+T <- nrow(table2_ready)
+numerator <- 2^T - 1
+denominator <- prod(1 + 1/results_df$bf_1c) - 1
+bf_1c_star_formula_equal <- numerator / denominator
+
+#----------------------------------------------------------------------------------
+### Compute BF_1c*(joint) by simplified expression w. complexity weighting (Eq. 8)
+
+# -> BF_1c*(joint) ≈ 7.24
+c1 <- 1 - table2_ready$P_theta_in_Hc   # complexity c_1^(t) of the predicted hypotheses
+
+numerator   <- prod(results_df$bf_1u) * (1 - prod(c1))
+denominator <- 1 - prod(c1 * results_df$bf_1u)
+bf_1c_star_formula_complexity <- numerator / denominator
 
 # ============================================================================
 # (3) Display results
@@ -153,10 +175,16 @@ output_lines <- c(
     "- - - - - - - - - -",
     paste0("BF_1u(joint) ≈ ", fmt2(bf_1u), " (", fmtE(bf_1u), ")"),
     paste0("BF_1c(joint) ≈ ", fmt2(bf_1c), " (", fmtE(bf_1c), ")"),
-    paste0("BF_1c*(joint) ≈ ", fmt2(bf_1c_star), " (", fmtE(bf_1c_star), ")"),
+    paste0("BF_1c*(joint) - enumeration ≈ ", fmt2(bf_1c_star_enumeration), " (", fmtE(bf_1c_star_enumeration), ")"),
+    paste0("BF_1c*(joint) - formula (complexity weighting) ≈ ", fmt2(bf_1c_star_formula_complexity), " (", fmtE(bf_1c_star_formula_complexity), ")"),
+    paste0("BF_1c*(joint) - formula (equal weighting) ≈ ", fmt2(bf_1c_star_formula_equal), " (", fmtE(bf_1c_star_formula_equal), ")"),
     ""
 )
 
 # Print results
 cat(paste(output_lines, collapse = "\n"), "\n", sep = "")
 
+# With exact inputs, enumeration and Eq. 9 would give identical results,
+# since both use equal weighting. The difference comes entirely from which of
+# Volker's rounded Bayes factors each method uses. Enumeration (Eq. 7) uses BF_1u's,
+# while Eq. 9 uses BF_1c's.

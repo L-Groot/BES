@@ -16,12 +16,29 @@ source("analyses/scheibehenne.r")   # Example 1: hotel towel reuse
 source("analyses/volker.r")         # Example 2: network embeddedness
 ```
 
+**3. Render the reports (HTML + PDF):**
+```r
+rmarkdown::render("analyses/scheibehenne.Rmd", output_format = "html_document", output_dir = "reports/html")
+rmarkdown::render("analyses/scheibehenne.Rmd", output_format = "pdf_document", output_dir = "reports/pdf")
+rmarkdown::render("analyses/volker.Rmd", output_format = "html_document", output_dir = "reports/html")
+rmarkdown::render("analyses/volker.Rmd", output_format = "pdf_document", output_dir = "reports/pdf")
+```
+If PDF rendering fails because no LaTeX distribution is available, install TinyTeX once:
+```r
+tinytex::install_tinytex()
+```
+
 ## Repository Structure
 
 ```
 ├── analyses/              # Analysis scripts
 │   ├── scheibehenne.r    # Example 1 (Table 2 in paper)
 │   └── volker.r          # Example 2 (Table 3 in paper)
+│   ├── scheibehenne.Rmd  # Source report for Example 1
+│   └── volker.Rmd        # Source report for Example 2
+├── reports/
+│   ├── html/             # Rendered HTML reports
+│   └── pdf/              # Rendered PDF reports
 ├── data/
 │   └── towelData.csv     # Raw data for scheibehenne.r
 ├── functions/

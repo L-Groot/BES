@@ -1,0 +1,349 @@
+---
+title: "Reanalysis of Volker (2022)"
+subtitle: "Network embeddedness, trust, and cooperation"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+  pdf_document:
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = "")
+```
+
+# Overview
+
+- Reproduces Table 2 of the paper.
+- Source: Volker, T. B. (2022). *The future is made today: Concerns for reputation
+  foster trust and cooperation* [Unpublished master's thesis]. Utrecht University.
+  [PDF](https://github.com/thomvolker/bes_master_thesis_sasr/blob/main/thesis/thesis_volker.pdf)
+- 16 study-specific tests from 8 studies, each on a regression coefficient $\beta$:
+    - $H_1: \beta > 0$
+    - $H_u: \beta \in \mathbb{R}$
+    - $H_c: \beta \le 0$
+- Complexity $c_1^{(t)} = 0.5$ in all tests: the prior
+  $\mathrm{N}\left(0, \hat{\Sigma}_{\beta} / b\right)$ is centered at 0 (Volker, 2022, pp. 32, 36).
+
+```{r packages, message=FALSE}
+library(dplyr)
+library(here)
+
+# Function that enumerates all components of the complete joint complement
+source(here("functions/compute_joint_complements.r"))
+
+# Helpers to format numbers in the text
+fmt2 <- function(x) sprintf("%.2f", x)  # 2 decimals
+fmt4 <- function(x) sprintf("%.4f", x)  # 4 decimals
+fmtE <- function(x) {                   # scientific notation for LaTeX math
+    if (!is.finite(x)) return("\\infty")
+    e <- floor(log10(abs(x)))
+    sprintf("%.2f \\times 10^{%d}", x / 10^e, e)
+}
+```
+
+# Data
+
+- Layout from Volker's Table 2; Bayes factors from his Table 4 (3 decimals).
+- Trustfulness: proportion of the endowment sent to the trustee.
+- Trustworthiness: proportion of the amount sent that is returned (p. 27).
+
+```{r data}
+table2_df <- data.frame(
+    study = c(
+        rep("bolton_2004", 2),
+        rep("duffy_2013_no_netmin", 2),
+        rep("duffy_2013_no_netfull", 2),
+        rep("buskens_2010", 2),
+        rep("van_miltenburg_2012", 2),
+        rep("frey_2019", 2),
+        rep("barrera_buskens_2009", 2),
+        "seinen_schram_2006",
+        "corten_2016"
+    ),
+    outcome = c(
+        rep(c("Trustfulness", "Trustworthiness"), 7),
+        "Cooperation (helping)",
+        "Cooperation"
+    ),
+    no_network = c(
+        0.67, 0.69, 0.62, 0.68, 0.75, 0.62, 0.83, 0.87,
+        0.90, 0.90, 0.77, 0.67, 0.73, 0.46, 0.38, 0.49
+    ),
+    network = c(
+        0.75, 0.61, 0.64, 0.77, 0.86, 0.94, 0.94, 0.94,
+        0.88, 0.91, 0.81, 0.88, 0.70, 0.50, 0.61, 0.37
+    ),
+    bf_iu = c(
+        1.474, 0.642, 1.292, 1.823, 1.799, 2.000, 1.848,
+        1.680, 0.675, 1.115, 1.426, 1.998, 0.482, 1.450,
+        1.902, 0.102
+    ),
+    bf_ic = c(
+        2.799, 0.473, 1.825, 10.319, 8.958, 2.60e+04,
+        12.168, 5.255, 0.509, 1.260, 2.486, 1.01e+03,
+        0.318, 2.634, 19.351, 0.054
+    )
+)
+```
+
+- This is a check: in the special case where $c_1^{(t)} = 0.5$ for all studies,
+the result should equal the one from equal weighting.
+- Volker reports $\mathrm{BF}_{1,u}^{(t)}$ and $\mathrm{BF}_{1,c}^{(t)}$.
+- `compute_joint_complements()` also needs $\mathrm{BF}_{c,u}^{(t)}$, which can be obtained by
+  transitivity: $\mathrm{BF}_{c,u}^{(t)} = \mathrm{BF}_{1,u}^{(t)} / \mathrm{BF}_{1,c}^{(t)}$.
+
+```{r study-bfs}
+results_df <- table2_df %>%
+    transmute(
+        Study   = study,
+        Outcome = outcome,
+        bf_1u   = bf_iu,
+        bf_1c   = bf_ic,
+        bf_cu   = bf_iu / bf_ic
+    )
+
+# Input for compute_joint_complements():
+# P_theta_in_Hc is the complexity of the complement, 1 - c_1 = 0.5
+table2_ready <- results_df %>%
+    select(Study, bf_1u, bf_cu) %>%
+    mutate(P_theta_in_Hc = 0.5)
+
+T <- nrow(results_df)  # number of study-specific tests (16)
+```
+
+```{r study-bfs-table, echo=FALSE}
+knitr::kable(
+    results_df,
+    digits = 3,
+  col.names = c("Study", "Outcome",
+          "$\\mathrm{BF}_{1,u}$",
+          "$\\mathrm{BF}_{1,c}$",
+          "$\\mathrm{BF}_{c,u}$"),
+  escape = FALSE
+)
+```
+
+# Product Bayes factors
+
+```{r product-bfs}
+bf_1u <- prod(results_df$bf_1u)  # against the joint unconstrained hypothesis
+bf_1c <- prod(results_df$bf_1c)  # against the incomplete joint complement
+```
+
+- $\mathrm{BF}_{1,u}^{(\text{joint})} = `r fmt2(bf_1u)`$ (Volker: 7.27; difference due
+  to rounding).
+- $\mathrm{BF}_{1,c}^{(\text{joint})} = `r fmtE(bf_1c)`$.
+
+# BF against the complete joint complement
+
+- Complete joint complement: $H_1^{(t)}$ is false in at least one test.
+- Computed in three ways; with exact inputs, all three agree here (with
+  $c_1^{(t)} = 0.5$, equal and complexity weighting coincide).
+
+## 1: Enumeration (Eq. 7)
+
+- Sums over all $2^T - 1 = `r format(2^T - 1, big.mark = ",")`$ components with equal
+  weights, giving $\mathrm{BF}_{c^*,u}^{(\text{joint})}$.
+- Then $\mathrm{BF}_{1,c^*}^{(\text{joint})} = \mathrm{BF}_{1,u}^{(\text{joint})} / \mathrm{BF}_{c^*,u}^{(\text{joint})}$.
+
+```{r enumeration}
+res <- compute_joint_complements(table2_ready,
+                                 replace_0_with = 0.001,
+                                 round_res = FALSE)
+
+# Sanity check: BF_1u(joint) / BF_cu(joint) should equal the product of the BF_1c's
+all.equal(res["BES_c", "bf_1u"] / res["BES_c", "bf_cu"], bf_1c)
+
+bf_1c_star_enumeration <- res["BES_c", "bf_1u"] / res["BES_c_star", "bf_cu_star"]
+```
+
+## 2: Complexity weighting (Eq. 8)
+
+- Check: in the special case where $c_1^{(t)} = 0.5$ for all studies,
+  the result should equal the one obtained from equal weighting.
+- Uses the $\mathrm{BF}_{1,u}^{(t)}$ and complexities $c_1^{(t)}$.
+
+$$
+\mathrm{BF}^{(\text{joint})}_{1,c^*}
+= \frac{\prod_{t=1}^{T}\mathrm{BF}^{(t)}_{1,u}\,\bigl(1-\prod_{t=1}^{T} c_1^{(t)}\bigr)}
+       {1-\prod_{t=1}^{T} c_1^{(t)}\,\mathrm{BF}^{(t)}_{1,u}}
+$$
+
+```{r complexity-weighting}
+c1 <- 1 - table2_ready$P_theta_in_Hc  # complexity c_1^(t) of H_1 in each test
+
+bf_1c_star_formula_complexity <-
+    prod(results_df$bf_1u) * (1 - prod(c1)) / (1 - prod(c1 * results_df$bf_1u))
+```
+
+## 3: Equal weighting (Eq. 9)
+
+- Uses only the $\mathrm{BF}_{1,c}^{(t)}$.
+
+$$
+\mathrm{BF}^{(\text{joint})}_{1,c^*}
+= \frac{2^T-1}{\prod_{t=1}^{T}\bigl(1 + 1/\mathrm{BF}^{(t)}_{1,c}\bigr) - 1}
+$$
+
+```{r equal-weighting}
+bf_1c_star_formula_equal <- (2^T - 1) / (prod(1 + 1 / results_df$bf_1c) - 1)
+```
+
+## Comparison
+
+```{r comparison, echo=FALSE}
+knitr::kable(
+    data.frame(
+        Method = c("Enumeration (Eq. 7)",
+             "Complexity weighting (Eq. 8)",
+             "Equal weighting (Eq. 9)"),
+      `Computed from` = c("$\\mathrm{BF}_{1,u}^{(t)}$",
+        "$\\mathrm{BF}_{1,u}^{(t)}$ and $c_1^{(t)}$",
+        "$\\mathrm{BF}_{1,c}^{(t)}$"),
+        `BF_1c*(joint)` = c(bf_1c_star_enumeration,
+                bf_1c_star_formula_complexity,
+                bf_1c_star_formula_equal),
+        check.names = FALSE
+    ),
+    col.names = c("Method",
+                  "Computed from",
+                  "$\\mathrm{BF}_{1,c^*}^{(\\mathrm{joint})}$"),
+    digits = 4,
+    escape = FALSE
+)
+```
+
+- Enumeration and Eq. 8: `r fmt2(bf_1c_star_enumeration)`; Eq. 9:
+  `r fmt2(bf_1c_star_formula_equal)`.
+- The difference comes from *which* rounded Bayes factors each method uses:
+    - Enumeration: numerator $\prod_t \mathrm{BF}_{1,u}^{(t)}$; denominator
+      $\mathrm{BF}_{c^*,u}^{(\text{joint})} \approx 1$.
+    - Eq. 8: $\mathrm{BF}_{1,u}^{(t)}$.
+    - Eq. 9: $\mathrm{BF}_{1,c}^{(t)}$.
+
+# Rounding check
+
+- **Goal:** How much of the gap between
+  $\mathrm{BF}_{1,u}^{(\text{joint})} = `r fmt2(bf_1u)`$ and
+  $\mathrm{BF}_{1,c^*}^{(\text{joint})} = `r fmt2(bf_1c_star_formula_equal)`$ (Eq. 9)
+  is due to rounding?
+- The two are computed from different columns
+  ($\mathrm{BF}_{1,u}$ vs. $\mathrm{BF}_{1,c}$), which Volker rounded separately to 3
+  decimals.
+- **Logic:** With $c_1 = 0.5$, each $\mathrm{BF}_{1,u}^{(t)}$ determines its
+  $\mathrm{BF}_{1,c}^{(t)}$ exactly, and vice versa:
+  $$
+  \mathrm{BF}_{1,c}^{(t)} = \frac{\mathrm{BF}_{1,u}^{(t)}}{2 - \mathrm{BF}_{1,u}^{(t)}}
+  \qquad\Longleftrightarrow\qquad
+  \mathrm{BF}_{1,u}^{(t)} = \frac{2\,\mathrm{BF}_{1,c}^{(t)}}{1 + \mathrm{BF}_{1,c}^{(t)}}
+  $$
+    - Set 1: reported $\mathrm{BF}_{1,u}^{(t)}$ → implied $\mathrm{BF}_{1,c}^{(t)}$.
+    - Set 2: reported $\mathrm{BF}_{1,c}^{(t)}$ → implied $\mathrm{BF}_{1,u}^{(t)}$.
+    - Within a set, both joint BFs use the same information, so any difference is
+      genuine (not due to rounding).
+- **Expectation**
+
+- With $c_1^{(t)} = 0.5$, Eqs. 8 and 9 reduce to
+  $\mathrm{BF}^{(\text{joint})}_{1,c^*} = \mathrm{BF}^{(\text{joint})}_{1,u} \times \text{factor}$,
+  where $\text{factor} = (2^T-1)/(2^T-\mathrm{BF}^{(\text{joint})}_{1,u})$.
+
+```{r expectation}
+# Step 1: ratio BF_1c*(joint) / BF_1u(joint) implied by Eqs. 8 and 9 when c_1 = 0.5
+factor <- (2^T - 1) / (2^T - bf_1u)
+
+# Step 2: expected BF_1c*(joint) without rounding
+bf_1cstar_exp <- bf_1u * factor
+
+# Step 3: expected difference between BF_1c*(joint) and BF_1u(joint)
+diff_exp <- bf_1cstar_exp - bf_1u
+```
+
+With $T = `r T`$ and $\mathrm{BF}^{(\text{joint})}_{1,u} = `r sprintf("%.6f", bf_1u)`$:
+
+1. **Factor:** how much larger $\mathrm{BF}^{(\text{joint})}_{1,c^*}$ should be than
+   $\mathrm{BF}^{(\text{joint})}_{1,u}$ (here `r sprintf("%.4f", 100 * (factor - 1))`% larger):
+   $$
+   \text{factor} = \frac{`r sprintf("%.0f", 2^T - 1)`}{`r sprintf("%.0f", 2^T)` - `r sprintf("%.6f", bf_1u)`} = `r sprintf("%.9f", factor)`
+   $$
+2. **Expected $\mathrm{BF}^{(\text{joint})}_{1,c^*}$** without rounding:
+   $$
+   `r sprintf("%.6f", bf_1u)` \times `r sprintf("%.9f", factor)` = `r sprintf("%.6f", bf_1cstar_exp)`
+   $$
+3. **Expected within-set difference:**
+   $$
+   `r sprintf("%.6f", bf_1cstar_exp)` - `r sprintf("%.6f", bf_1u)` = `r sprintf("%.6f", diff_exp)` \approx `r fmt4(diff_exp)`
+   $$
+
+- This is the genuine difference that remains without rounding. The table below
+  compares it with the observed differences.
+
+```{r rounding-check}
+# Set 1: consistent set based on the reported BF_1u's
+bf_1c_from_1u <- results_df$bf_1u / (2 - results_df$bf_1u)
+
+check_set1_bf_1u_joint <- prod(results_df$bf_1u)
+check_set1_bf_1cstar   <- (2^T - 1) / (prod(1 + 1 / bf_1c_from_1u) - 1)
+
+# Set 2: consistent set based on the reported BF_1c's
+bf_1u_from_1c <- 2 * results_df$bf_1c / (1 + results_df$bf_1c)
+
+check_set2_bf_1u_joint <- prod(bf_1u_from_1c)
+check_set2_bf_1cstar   <- (2^T - 1) / (prod(1 + 1 / results_df$bf_1c) - 1)
+```
+
+```{r rounding-check-table, echo=FALSE}
+knitr::kable(
+    data.frame(
+    Inputs = c("Set 1: reported $\\mathrm{BF}_{1,u}$ values",
+           "Set 2: reported $\\mathrm{BF}_{1,c}$ values",
+                   "Reported values (mixed sets)"),
+        `BF_1u(joint)` = c(check_set1_bf_1u_joint, check_set2_bf_1u_joint, bf_1u),
+        `BF_1c*(joint)` = c(check_set1_bf_1cstar, check_set2_bf_1cstar,
+                            bf_1c_star_formula_equal),
+        check.names = FALSE
+    ) %>%
+        mutate(Difference = `BF_1c*(joint)` - `BF_1u(joint)`),
+  col.names = c("Inputs",
+          "$\\mathrm{BF}_{1,u}^{(\\mathrm{joint})}$",
+          "$\\mathrm{BF}_{1,c^*}^{(\\mathrm{joint})}$",
+          "Difference"),
+  digits = 4,
+  escape = FALSE
+)
+```
+
+**Conclusion:**
+
+- Within each set: difference $\approx$ `r fmt4(check_set1_bf_1cstar - check_set1_bf_1u_joint)`,
+  as expected.
+- Reported (mixed) values: difference = `r fmt4(bf_1c_star_formula_equal - bf_1u)`.
+- So the gap is almost entirely due to rounding, mostly from the smallest Bayes
+  factors (e.g., Corten et al., 2016: reported $\mathrm{BF}_{1,u} = 0.102$, but
+  $\mathrm{BF}_{1,c} = 0.054$ implies
+  $\mathrm{BF}_{1,u} = `r fmt4(bf_1u_from_1c[results_df$Study == "corten_2016"])`$).
+
+# Summary
+
+```{r summary-table, echo=FALSE}
+knitr::kable(
+    data.frame(
+    Metric = c("$\\mathrm{BF}_{1,u}^{(\\mathrm{joint})}$",
+           "$\\mathrm{BF}_{1,c}^{(\\mathrm{joint})}$",
+           "$\\mathrm{BF}_{1,c^*}^{(\\mathrm{joint})}$"),
+    Value = formatC(c(bf_1u, bf_1c, bf_1c_star_formula_equal),
+            digits = 3, format = "g"),
+        check.names = FALSE
+    ),
+  col.names = c("", ""),
+  align = c("l", "r"),
+  escape = FALSE
+)
+```
+
+# Session info
+
+```{r session-info}
+sessionInfo()
+```
