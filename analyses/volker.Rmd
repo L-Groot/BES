@@ -7,6 +7,7 @@ output:
     toc_float: true
   pdf_document:
     toc: true
+    latex_engine: xelatex
 ---
 
 ```{r setup, include=FALSE}
@@ -142,7 +143,7 @@ bf_1c <- prod(results_df$bf_1c)  # against the incomplete joint complement
 - Computed in three ways; with exact inputs, all three agree here (with
   $c_1^{(t)} = 0.5$, equal and complexity weighting coincide).
 
-## 1: Enumeration (Eq. 7)
+## 1: Equal weighting, enumeration (Eq. 7)
 
 - Sums over all $2^T - 1 = `r format(2^T - 1, big.mark = ",")`$ components with equal
   weights, giving $\mathrm{BF}_{c^*,u}^{(\text{joint})}$.
@@ -178,7 +179,7 @@ bf_1c_star_formula_complexity <-
     prod(results_df$bf_1u) * (1 - prod(c1)) / (1 - prod(c1 * results_df$bf_1u))
 ```
 
-## 3: Equal weighting (Eq. 9)
+## 3: Equal weighting, simplified expression (Eq. 9)
 
 - Uses only the $\mathrm{BF}_{1,c}^{(t)}$.
 
@@ -196,9 +197,9 @@ bf_1c_star_formula_equal <- (2^T - 1) / (prod(1 + 1 / results_df$bf_1c) - 1)
 ```{r comparison, echo=FALSE}
 knitr::kable(
     data.frame(
-        Method = c("Enumeration (Eq. 7)",
+        Method = c("Equal weighting, enumeration (Eq. 7)",
              "Complexity weighting (Eq. 8)",
-             "Equal weighting (Eq. 9)"),
+             "Equal weighting, simplified expression (Eq. 9)"),
       `Computed from` = c("$\\mathrm{BF}_{1,u}^{(t)}$",
         "$\\mathrm{BF}_{1,u}^{(t)}$ and $c_1^{(t)}$",
         "$\\mathrm{BF}_{1,c}^{(t)}$"),

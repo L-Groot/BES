@@ -7,6 +7,7 @@ output:
     toc_float: true
   pdf_document:
     toc: true
+    latex_engine: xelatex
 ---
 
 ```{r setup, include=FALSE}
@@ -199,10 +200,27 @@ bf_1c <- prod(results_df$bf_1c)
 
 # BF against complete joint complement
 
-## 1: Enumeration (Eq. 7)
+- The complete complement consists of all $2^T - 1$ components $H_\Omega$ in which the prediction fails in at least one study.
+- Its Bayes factor is a weighted average over these components (Eq. 7).
+- Methods 1 and 2 both use equal weights and compute the same quantity in two ways. Method 3 uses complexity weights.
+
+## 1: Equal weighting, enumeration (Eq. 7)
+
+- Sums the Bayes factors of all $2^T - 1$ components, each with the same weight $\pi_\Omega = 1/(2^T-1)$ (done inside `compute_joint_complements()`).
+- Uses $\mathrm{BF}_{1,u}^{(t)}$ and $\mathrm{BF}_{c,u}^{(t)}$.
+- Note: inside the function, the $\mathrm{BF}_{1,u}^{(t)}$ entering each component are recomputed from $\mathrm{BF}_{c,u}^{(t)}$ and $P(\theta^{(t)} \in H_c^{(t)})$ via Eq. 5. Here they equal the supplied $\mathrm{BF}_{1,u}^{(t)}$, because both come from the same posterior samples.
+
+$$
+\mathrm{BF}^{(\text{joint})}_{c^*,u}
+= \frac{1}{2^T-1}\sum_{\emptyset\neq\Omega\subseteq\{1,\ldots,T\}}
+  \prod_{t\in\Omega}\mathrm{BF}^{(t)}_{c,u}\prod_{t\notin\Omega}\mathrm{BF}^{(t)}_{1,u},
+\qquad
+\mathrm{BF}^{(\text{joint})}_{1,c^*}
+= \frac{\mathrm{BF}^{(\text{joint})}_{1,u}}{\mathrm{BF}^{(\text{joint})}_{c^*,u}}
+\quad \text{(Eq. 10)}
+$$
 
 ```{r enumeration}
-set.seed(45)
 res <- compute_joint_complements(
   final_df,
   replace_0_with = 0.001,
@@ -212,13 +230,32 @@ res <- compute_joint_complements(
 # Sanity check: BF_1u(joint) / BF_cu(joint) should equal the product of the BF_1c's
 all.equal(res["BES_c", "bf_1u"] / res["BES_c", "bf_cu"], bf_1c)
 
+# BF_1c*(joint) = BF_1u(joint) / BF_c*u(joint) (transitivity, Eq. 10)
 bf_1c_star_enumeration <- res["BES_c", "bf_1u"] / res["BES_c_star", "bf_cu_star"]
 ```
 
-## 2: Complexity weighting (Eq. 8)
+## 2: Equal weighting, simplified expression (Eq. 9)
 
-- Check: with $c_1^{(t)} = 0.5$ for all studies, this should be close to equal weighting.
+- Same quantity as Method 1, algebraically simplified (Appendix A.2) so that the $2^T - 1$ components need not be enumerated.
+- Uses only $\mathrm{BF}_{1,c}^{(t)} = \mathrm{BF}_{1,u}^{(t)} / \mathrm{BF}_{c,u}^{(t)}$: the same information as Method 1, reduced to one ratio per study.
+
+$$
+\mathrm{BF}^{(\text{joint})}_{1,c^*}
+= \frac{2^T-1}{\prod_{t=1}^{T}\bigl(1 + 1/\mathrm{BF}^{(t)}_{1,c}\bigr) - 1}
+$$
+
+```{r equal-weighting}
+bf_1c_star_formula_equal <- (2^T - 1) / (prod(1 + 1 / results_df$bf_1c) - 1)
+
+# Check: identical to Method 1 (enumeration)
+all.equal(bf_1c_star_formula_equal, bf_1c_star_enumeration)
+```
+
+## 3: Complexity weighting (Eq. 8)
+
+- Weights each component by its share of the prior mass of the complete complement, $\pi_\Omega = c_\Omega / \bigl(1 - \prod_{t} c_1^{(t)}\bigr)$.
 - Uses $\mathrm{BF}_{1,u}^{(t)}$ and complexities $c_1^{(t)}$.
+- Here $c_1^{(t)} = 0.5$ in all studies, so every component has the same prior mass $2^{-T}$ and complexity weighting reduces exactly to equal weighting.
 
 $$
 \mathrm{BF}^{(\text{joint})}_{1,c^*}
@@ -231,19 +268,9 @@ c1 <- 1 - final_df$P_theta_in_Hc
 
 bf_1c_star_formula_complexity <-
   prod(results_df$bf_1u) * (1 - prod(c1)) / (1 - prod(c1 * results_df$bf_1u))
-```
 
-## 3: Equal weighting (Eq. 9)
-
-- Uses only $\mathrm{BF}_{1,c}^{(t)}$.
-
-$$
-\mathrm{BF}^{(\text{joint})}_{1,c^*}
-= \frac{2^T-1}{\prod_{t=1}^{T}\bigl(1 + 1/\mathrm{BF}^{(t)}_{1,c}\bigr) - 1}
-$$
-
-```{r equal-weighting}
-bf_1c_star_formula_equal <- (2^T - 1) / (prod(1 + 1 / results_df$bf_1c) - 1)
+# Check: identical to equal weighting here, because c_1 = 0.5 in all studies
+all.equal(bf_1c_star_formula_complexity, bf_1c_star_formula_equal)
 ```
 
 # Summary
@@ -255,17 +282,17 @@ knitr::kable(
       "$\\mathrm{BF}_{1,0}^{(\\mathrm{joint})}$",
       "$\\mathrm{BF}_{1,u}^{(\\mathrm{joint})}$",
       "$\\mathrm{BF}_{1,c}^{(\\mathrm{joint})}$",
-      "$\\mathrm{BF}_{1,c^*}^{(\\mathrm{joint})}$ (Eq. 7)",
-      "$\\mathrm{BF}_{1,c^*}^{(\\mathrm{joint})}$ (Eq. 8)",
-      "$\\mathrm{BF}_{1,c^*}^{(\\mathrm{joint})}$ (Eq. 9)"
+      "$\\mathrm{BF}_{1,c^*}^{(\\mathrm{joint})}$, equal weighting, enumeration (Eq. 7)",
+      "$\\mathrm{BF}_{1,c^*}^{(\\mathrm{joint})}$, equal weighting, simplified expression (Eq. 9)",
+      "$\\mathrm{BF}_{1,c^*}^{(\\mathrm{joint})}$, complexity weighting (Eq. 8)"
     ),
     Value = c(
       formatC(bf_10, format = "e", digits = 3),
       formatC(bf_1u, format = "f", digits = 4),
       formatC(bf_1c, format = "e", digits = 3),
       formatC(bf_1c_star_enumeration, format = "f", digits = 4),
-      formatC(bf_1c_star_formula_complexity, format = "f", digits = 4),
-      formatC(bf_1c_star_formula_equal, format = "f", digits = 4)
+      formatC(bf_1c_star_formula_equal, format = "f", digits = 4),
+      formatC(bf_1c_star_formula_complexity, format = "f", digits = 4)
     ),
     check.names = FALSE
   ),
