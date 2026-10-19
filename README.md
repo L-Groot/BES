@@ -36,6 +36,8 @@ tinytex::install_tinytex()
 │   └── volker.r          # Example 2 (Table 3 in paper)
 │   ├── scheibehenne.Rmd  # Source report for Example 1
 │   └── volker.Rmd        # Source report for Example 2
+├── original/              # Unmodified scripts from the original authors
+│   └── scheibehenne_original.r   # Original script from the OSF repository accompanying Scheibehenne et al. (2016)
 ├── reports/
 │   ├── html/             # Rendered HTML reports
 │   └── pdf/              # Rendered PDF reports
