@@ -56,7 +56,7 @@ n <- dim(rawData)[1] / 4
    bf_10_vec <- rep(NA, times=length(exList))
    bf_1c_vec <- rep(NA, times=length(exList))
 
-   # Set seed for reproducibility
+   # Set seed for reproducibility (not in original script)
    set.seed(45)
    
    for (i in 1:length(exList)) {
@@ -173,7 +173,6 @@ bf_1c <- prod(results_df$bf_1c)
 #----------------------------------------------------------------------------------
 ### Compute BF_1c*(joint) by enumeration (Eq. 7)
 
-set.seed(45)
 res <- compute_joint_complements(final_df,
                           replace_0_with = 0.001,
                           round_res = FALSE)
