@@ -77,7 +77,7 @@ This saves Figures 1–2 and S1 (PDF + SVG) to `figures/`.
 
 Scheibehenne, B., Jamil, T., & Wagenmakers, E.-J. (2016). Bayesian evidence synthesis can reconcile seemingly inconsistent results: The case of hotel towel reuse. *Psychological Science, 27*(7), 1043-1046. https://doi.org/10.1177/0956797616644081
 
-Volker, T. B. (2022). *The future is made today: Concerns for reputation foster trust and cooperation* [Unpublished master's thesis].
+Volker, T. B. (2022). *The future is made today: Concerns for reputation foster trust and cooperation* [Master's thesis, Utrecht University]. https://github.com/thomvolker/bes_master_thesis_sasr/blob/dc16ff3c5e751635ba4e5f8a96bcfe15cd8e2af5/thesis/thesis_volker.pdf ([archived copy](https://web.archive.org/web/20261028185815/https://raw.githubusercontent.com/thomvolker/bes_master_thesis_sasr/dc16ff3c5e751635ba4e5f8a96bcfe15cd8e2af5/thesis/thesis_volker.pdf))
 
 ## Licence
 
