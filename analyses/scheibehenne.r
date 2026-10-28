@@ -22,7 +22,7 @@ library(here)
 
 # Load complement function and data
 source(here("functions/compute_joint_complements.r"))
-rawData <- read.table(here("data/towelData.csv"), header=T, sep=";", stringsAsFactors=F)
+rawData <- read.table(here("scheibehenne_original/towelData.csv"), header=T, sep=";", stringsAsFactors=F)
 
 # n = number of experiments (each experiment has 4 cells: 2x2)
 n <- dim(rawData)[1] / 4

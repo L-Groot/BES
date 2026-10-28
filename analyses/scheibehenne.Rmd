@@ -43,7 +43,7 @@ fmtE <- function(x) sprintf("%.2e", x)
 
 ```{r data}
 rawData <- read.table(
-  here("data/towelData.csv"),
+  here("scheibehenne_original/towelData.csv"),
   header = TRUE,
   sep = ";",
   stringsAsFactors = FALSE
