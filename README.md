@@ -1,6 +1,6 @@
 # Bayesian Evidence Synthesis (BES)
 
-Reproducible code for the empirical examples in *"Specifying meaningful hypotheses across studies: Bayesian evidence synthesis revisited"* by Laura Groot and Daniel W. Heck. [Preprint link coming soon]
+Reproducible code for the empirical examples and figures in *"Specifying meaningful hypotheses across studies: Bayesian evidence synthesis revisited"* by Laura Groot and Daniel W. Heck. [Preprint link coming soon]
 
 ## Quick Start
 
@@ -28,6 +28,15 @@ If PDF rendering fails because no LaTeX distribution is available, install TinyT
 tinytex::install_tinytex()
 ```
 
+**4. Create the figures (Python):**
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python functions/make_figures.py
+```
+This saves Figures 1–3 (PDF + SVG) to `plots/`.
+
 ## Repository Structure
 
 ```
@@ -44,7 +53,14 @@ tinytex::install_tinytex()
 ├── data/
 │   └── towelData.csv     # Raw data for scheibehenne.r
 ├── functions/
-│   └── compute_joint_complements.r   # Computes joint BFs including complete complement
+│   ├── compute_joint_complements.r   # Computes joint BFs including complete complement
+│   ├── make_figures.py               # Creates Figures 1–3
+│   ├── study_specific_hypotheses.py  # Figure 1: study-specific hypotheses
+│   ├── joint_hypotheses.py           # Figure 2: joint hypotheses (3D cube)
+│   ├── multiple_predicted_hypotheses.py  # Figure 3: multiple predicted hypotheses
+│   └── color_palette.py              # Colorblind-friendly palette shared by all figures
+├── plots/                # Figures 1–3 (PDF + SVG)
+├── requirements.txt      # Python package versions for the figures
 ├── renv/                 # renv - package management for reproducibility
 │   ├── activate.R        # Activates isolated R environment on startup
 │   ├── settings.json     # renv configuration
@@ -56,6 +72,7 @@ tinytex::install_tinytex()
 ## Requirements
 
 - R 4.6.1+
+- Python 3.13+ (for the figures only)
 
 ## References
 

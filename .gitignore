@@ -6,3 +6,7 @@
 # OS / editor junk
 .DS_Store
 Thumbs.db
+
+# Python
+.venv/
+__pycache__/
