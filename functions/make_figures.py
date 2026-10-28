@@ -20,7 +20,7 @@ from PyPDF2 import PdfReader, PdfWriter, PdfMerger
 
 # Set up output directories
 # Use absolute path relative to script location so it works regardless of cwd
-OUT_DIR = Path(__file__).parent.parent / "plots"
+OUT_DIR = Path(__file__).parent.parent / "figures"
 
 OUT_DIR_FIG1 = OUT_DIR / "figure1"
 OUT_DIR_FIG2 = OUT_DIR / "figure2"

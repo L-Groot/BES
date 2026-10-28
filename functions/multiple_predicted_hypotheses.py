@@ -44,7 +44,7 @@ LABEL_COLOR = "#111111"
 
 # Default output should match the main project figure layout, not a nested
 # functions/figures directory created during module import.
-OUT_DIR = Path(__file__).resolve().parent.parent / "plots" / "figureS1"
+OUT_DIR = Path(__file__).resolve().parent.parent / "figures" / "figureS1"
 
 BASE_FIG_WIDTH = 12.0
 BASE_FIG_HEIGHT = 5.0

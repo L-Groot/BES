@@ -23,7 +23,7 @@ Reproducible code for the empirical examples and figures in *"Specifying meaning
 │   ├── joint_hypotheses.py           # Figure 2: joint hypotheses (3D cube)
 │   ├── multiple_predicted_hypotheses.py  # Figure S1: multiple predicted hypotheses
 │   └── color_palette.py              # Colorblind-friendly palette shared by all figures
-├── plots/                # Figures 1–2 and S1 (PDF + SVG)
+├── figures/              # Figures 1–2 and S1 (PDF + SVG)
 ├── requirements.txt      # Python package versions for the figures
 ├── renv/                 # renv - package management for reproducibility
 │   ├── activate.R        # Activates isolated R environment on startup
@@ -66,7 +66,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 python functions/make_figures.py
 ```
-This saves Figures 1–2 and S1 (PDF + SVG) to `plots/`.
+This saves Figures 1–2 and S1 (PDF + SVG) to `figures/`.
 
 ## Requirements
 
