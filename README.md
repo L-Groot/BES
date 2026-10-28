@@ -12,7 +12,7 @@ Reproducible code for the empirical examples and figures in *"Specifying meaning
 │   └── volker.Rmd        # Source report for Example 2
 ├── scheibehenne_original/ # Unmodified materials from Scheibehenne et al. (2016) <a href="https://osf.io/ycx49/">(link to OSF repository)</a>
 │   ├── scheibehenne_original.r   # Original analysis script
-│   └── towelData.csv             # Raw data (also used by analyses/scheibehenne.r)
+│   └── towelData.csv             # Raw data
 ├── reports/
 │   ├── html/             # Rendered HTML reports
 │   └── pdf/              # Rendered PDF reports
@@ -20,10 +20,10 @@ Reproducible code for the empirical examples and figures in *"Specifying meaning
 │   ├── compute_joint_complements.r   # Computes joint BFs including complete complement
 │   ├── make_figures.py               # Creates Figures 1–2 and S1
 │   ├── study_specific_hypotheses.py  # Figure 1: study-specific hypotheses
-│   ├── joint_hypotheses.py           # Figure 2: joint hypotheses (3D cube)
+│   ├── joint_hypotheses.py           # Figure 2: joint hypotheses
 │   ├── multiple_predicted_hypotheses.py  # Figure S1: multiple predicted hypotheses
-│   └── color_palette.py              # Colorblind-friendly palette shared by all figures
-├── figures/              # Figures 1–2 and S1 (PDF + SVG)
+│   └── color_palette.py              # Colorblind-friendly palette for all figures
+├── figures/                # Figures 1–2 and S1 (PDF + SVG)
 ├── requirements.txt      # Python package versions for the figures
 ├── renv/                 # renv - package management for reproducibility
 │   ├── activate.R        # Activates isolated R environment on startup
