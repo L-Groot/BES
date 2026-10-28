@@ -31,8 +31,8 @@ def _get_region_colors(lightness: float = DEFAULT_COLOR_LIGHTNESS) -> tuple[str,
     """Return (H2, Hc, H1) colors with configurable lightness."""
     amount = min(1.0, max(0.0, lightness))
     # color_h2 = _lighten_hex(hypothesis_palette["H2"], amount=amount)
-    # color_hc = _lighten_hex(hypothesis_palette["Hc"][:7], amount=amount)
-    # color_h1 = _lighten_hex(hypothesis_palette["H1"][:7], amount=amount)
+    # color_hc = _lighten_hex(hypothesis_palette["Hc"], amount=amount)
+    # color_h1 = _lighten_hex(hypothesis_palette["H1"], amount=amount)
     color_h2 = hypothesis_palette["H2"]
     color_hc = hypothesis_palette["Hc"]
     color_h1 = hypothesis_palette["H1"]
@@ -147,8 +147,8 @@ def plot_set_1(
     hypothesis_label_scale: float = 1.0,
     dash_coarseness: float = 1.0,
     color_h2: str = hypothesis_palette["H2"],
-    color_hc: str = hypothesis_palette["Hc"][:7],
-    color_h1: str = hypothesis_palette["H1"][:7],
+    color_hc: str = hypothesis_palette["Hc"],
+    color_h1: str = hypothesis_palette["H1"],
 ) -> None:
     """Set 1: H1 (beta>0, sigma>0), H2 (beta>0, sigma<0), Hc elsewhere."""
     # Hc region (left half-plane).
@@ -180,8 +180,8 @@ def plot_set_2(
     hypothesis_label_scale: float = 1.0,
     dash_coarseness: float = 1.0,
     color_h2: str = hypothesis_palette["H2"],
-    color_hc: str = hypothesis_palette["Hc"][:7],
-    color_h1: str = hypothesis_palette["H1"][:7],
+    color_hc: str = hypothesis_palette["Hc"],
+    color_h1: str = hypothesis_palette["H1"],
 ) -> None:
     """Set 2: H2 nested in H1 (H1: beta>0, H2: beta>0 and sigma<0)."""
     # Hc region (same area as set 1, visually: left half-plane).
