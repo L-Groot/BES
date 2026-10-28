@@ -35,23 +35,22 @@ source .venv/bin/activate
 pip install -r requirements.txt
 python functions/make_figures.py
 ```
-This saves Figures 1–3 (PDF + SVG) to `plots/`.
+This saves Figures 1-3 (PDF + SVG) to `plots/`.
 
 ## Repository Structure
 
-```
+<pre>
 ├── analyses/              # Analysis scripts
 │   ├── scheibehenne.r    # Example 1 (Table 2 in paper)
 │   └── volker.r          # Example 2 (Table 3 in paper)
 │   ├── scheibehenne.Rmd  # Source report for Example 1
 │   └── volker.Rmd        # Source report for Example 2
-├── original/              # Unmodified scripts from the original authors
-│   └── scheibehenne_original.r   # Original script from the OSF repository accompanying Scheibehenne et al. (2016)
+├── scheibehenne_original/ # Unmodified materials from <a href="https://osf.io/ycx49/">Scheibehenne et al. (2016)</a>
+│   ├── scheibehenne_original.r   # Original analysis script
+│   └── towelData.csv             # Raw data (also used by analyses/scheibehenne.r)
 ├── reports/
 │   ├── html/             # Rendered HTML reports
 │   └── pdf/              # Rendered PDF reports
-├── data/
-│   └── towelData.csv     # Raw data for scheibehenne.r
 ├── functions/
 │   ├── compute_joint_complements.r   # Computes joint BFs including complete complement
 │   ├── make_figures.py               # Creates Figures 1–3
@@ -67,7 +66,7 @@ This saves Figures 1–3 (PDF + SVG) to `plots/`.
 │   └── .gitignore        # Ignores library/ (auto-generated on restore)
 ├── renv.lock             # Locks exact package versions
 └── .Rprofile             # Auto-activates renv
-```
+</pre>
 
 ## Requirements
 
