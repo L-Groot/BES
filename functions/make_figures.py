@@ -7,7 +7,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 # Import own functions
 from functions.study_specific_hypotheses import draw_study_specific_hypotheses
 from functions.joint_hypotheses import plot_hypothesis_cube
-from functions.multiple_predicted_hypotheses import save_figure3
+from functions.multiple_predicted_hypotheses import save_figureS1
 
 # Import standard libraries
 import plotly.io as pio
@@ -24,11 +24,11 @@ OUT_DIR = Path(__file__).parent.parent / "plots"
 
 OUT_DIR_FIG1 = OUT_DIR / "figure1"
 OUT_DIR_FIG2 = OUT_DIR / "figure2"
-OUT_DIR_FIG3 = OUT_DIR / "figure3"
+OUT_DIR_FIGS1 = OUT_DIR / "figureS1"
 
 OUT_DIR_FIG1.mkdir(parents=True, exist_ok=True)
 OUT_DIR_FIG2.mkdir(parents=True, exist_ok=True)
-OUT_DIR_FIG3.mkdir(parents=True, exist_ok=True)
+OUT_DIR_FIGS1.mkdir(parents=True, exist_ok=True)
 
 
 #%%
@@ -238,22 +238,22 @@ crop_pdf(OUT_DIR_FIG2 / "fig2_B4_equivalence_complete_hc.pdf")
 
 #%%
 # -------------------------------------------------------
-# Figure 3: 2D Hypothesis Spaces
+# Figure S1: 2D Hypothesis Spaces
 # -------------------------------------------------------
 
-FIG3_WIDTH_IN = 14
-FIG3_AXIS_LABEL_SCALE = 1.2
-FIG3_HYPOTHESIS_LABEL_SCALE = 1.4
-FIG3_AXIS_DASH_COARSENESS = 1.5
-FIG3_LIGHTNESS = 0.3
+FIGS1_WIDTH_IN = 14
+FIGS1_AXIS_LABEL_SCALE = 1.2
+FIGS1_HYPOTHESIS_LABEL_SCALE = 1.4
+FIGS1_AXIS_DASH_COARSENESS = 1.5
+FIGS1_LIGHTNESS = 0.3
 
-save_figure3(
-    out_dir=OUT_DIR_FIG3,
+save_figureS1(
+    out_dir=OUT_DIR_FIGS1,
     show=False,
-    fig_width=FIG3_WIDTH_IN,
-    axis_label_scale=FIG3_AXIS_LABEL_SCALE,
-    hypothesis_label_scale=FIG3_HYPOTHESIS_LABEL_SCALE,
-    dash_coarseness=FIG3_AXIS_DASH_COARSENESS,
-    lightness=FIG3_LIGHTNESS,
+    fig_width=FIGS1_WIDTH_IN,
+    axis_label_scale=FIGS1_AXIS_LABEL_SCALE,
+    hypothesis_label_scale=FIGS1_HYPOTHESIS_LABEL_SCALE,
+    dash_coarseness=FIGS1_AXIS_DASH_COARSENESS,
+    lightness=FIGS1_LIGHTNESS,
 )
 # %%

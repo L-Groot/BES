@@ -44,7 +44,7 @@ LABEL_COLOR = "#111111"
 
 # Default output should match the main project figure layout, not a nested
 # functions/figures directory created during module import.
-OUT_DIR = Path(__file__).resolve().parent.parent / "plots" / "figure3"
+OUT_DIR = Path(__file__).resolve().parent.parent / "plots" / "figureS1"
 
 BASE_FIG_WIDTH = 12.0
 BASE_FIG_HEIGHT = 5.0
@@ -214,14 +214,14 @@ def plot_set_2(
 
 
 
-def create_figure3(
+def create_figureS1(
     fig_width: float = BASE_FIG_WIDTH,
     axis_label_scale: float = 1.0,
     hypothesis_label_scale: float = 1.0,
     dash_coarseness: float = 1.0,
     lightness: float = DEFAULT_COLOR_LIGHTNESS,
 ) -> plt.Figure:
-    """Build and return the Figure 3 canvas.
+    """Build and return the Figure S1 canvas.
 
     Args:
         fig_width: Figure width in inches.
@@ -259,7 +259,7 @@ def create_figure3(
     return fig
 
 
-def save_figure3(
+def save_figureS1(
     out_dir: Path | None = None,
     show: bool = False,
     fig_width: float = BASE_FIG_WIDTH,
@@ -268,23 +268,23 @@ def save_figure3(
     dash_coarseness: float = 1.0,
     lightness: float = DEFAULT_COLOR_LIGHTNESS,
 ) -> Path:
-    """Create Figure 3 and save it as PDF and SVG; return the output path."""
+    """Create Figure S1 and save it as PDF and SVG; return the output path."""
     out = OUT_DIR if out_dir is None else out_dir
     out.mkdir(parents=True, exist_ok=True)
 
-    fig = create_figure3(
+    fig = create_figureS1(
         fig_width=fig_width,
         axis_label_scale=axis_label_scale,
         hypothesis_label_scale=hypothesis_label_scale,
         dash_coarseness=dash_coarseness,
         lightness=lightness,
     )
-    pdf_path = out / "fig3_multiple_predicted_hypotheses.pdf"
+    pdf_path = out / "figS1_multiple_predicted_hypotheses.pdf"
 
     fig.savefig(pdf_path, bbox_inches="tight")
     print(f"Saved: {pdf_path}")
     
-    svg_path = out / "fig3_multiple_predicted_hypotheses.svg"
+    svg_path = out / "figS1_multiple_predicted_hypotheses.svg"
     fig.savefig(svg_path, bbox_inches="tight", format="svg")
     print(f"Saved: {svg_path}")
     
@@ -295,7 +295,7 @@ def save_figure3(
 
 
 def main() -> None:
-    save_figure3(show=False)
+    save_figureS1(show=False)
 
 
 if __name__ == "__main__":

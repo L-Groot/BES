@@ -2,7 +2,38 @@
 
 Reproducible code for the empirical examples and figures in *"Specifying meaningful hypotheses across studies: Bayesian evidence synthesis revisited"* by Laura Groot and Daniel W. Heck. [Preprint link coming soon]
 
-## Quick Start
+## Repository Structure
+
+<pre>
+├── analyses/              # Analysis scripts
+│   ├── scheibehenne.r    # Example 1 (Table 2 in paper)
+│   └── volker.r          # Example 2 (Table 3 in paper)
+│   ├── scheibehenne.Rmd  # Source report for Example 1
+│   └── volker.Rmd        # Source report for Example 2
+├── scheibehenne_original/ # Unmodified materials from Scheibehenne et al. (2016) <a href="https://osf.io/ycx49/">(link to OSF repository)</a>
+│   ├── scheibehenne_original.r   # Original analysis script
+│   └── towelData.csv             # Raw data (also used by analyses/scheibehenne.r)
+├── reports/
+│   ├── html/             # Rendered HTML reports
+│   └── pdf/              # Rendered PDF reports
+├── functions/
+│   ├── compute_joint_complements.r   # Computes joint BFs including complete complement
+│   ├── make_figures.py               # Creates Figures 1–2 and S1
+│   ├── study_specific_hypotheses.py  # Figure 1: study-specific hypotheses
+│   ├── joint_hypotheses.py           # Figure 2: joint hypotheses (3D cube)
+│   ├── multiple_predicted_hypotheses.py  # Figure S1: multiple predicted hypotheses
+│   └── color_palette.py              # Colorblind-friendly palette shared by all figures
+├── plots/                # Figures 1–2 and S1 (PDF + SVG)
+├── requirements.txt      # Python package versions for the figures
+├── renv/                 # renv - package management for reproducibility
+│   ├── activate.R        # Activates isolated R environment on startup
+│   ├── settings.json     # renv configuration
+│   └── .gitignore        # Ignores library/ (auto-generated on restore)
+├── renv.lock             # Locks exact package versions
+└── .Rprofile             # Auto-activates renv
+</pre>
+
+## Reproduce Analyses and Figures
 
 **1. Setup the R environment**:
 ```r
@@ -35,38 +66,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 python functions/make_figures.py
 ```
-This saves Figures 1-3 (PDF + SVG) to `plots/`.
-
-## Repository Structure
-
-<pre>
-├── analyses/              # Analysis scripts
-│   ├── scheibehenne.r    # Example 1 (Table 2 in paper)
-│   └── volker.r          # Example 2 (Table 3 in paper)
-│   ├── scheibehenne.Rmd  # Source report for Example 1
-│   └── volker.Rmd        # Source report for Example 2
-├── scheibehenne_original/ # Unmodified materials from <a href="https://osf.io/ycx49/">Scheibehenne et al. (2016)</a>
-│   ├── scheibehenne_original.r   # Original analysis script
-│   └── towelData.csv             # Raw data (also used by analyses/scheibehenne.r)
-├── reports/
-│   ├── html/             # Rendered HTML reports
-│   └── pdf/              # Rendered PDF reports
-├── functions/
-│   ├── compute_joint_complements.r   # Computes joint BFs including complete complement
-│   ├── make_figures.py               # Creates Figures 1–3
-│   ├── study_specific_hypotheses.py  # Figure 1: study-specific hypotheses
-│   ├── joint_hypotheses.py           # Figure 2: joint hypotheses (3D cube)
-│   ├── multiple_predicted_hypotheses.py  # Figure 3: multiple predicted hypotheses
-│   └── color_palette.py              # Colorblind-friendly palette shared by all figures
-├── plots/                # Figures 1–3 (PDF + SVG)
-├── requirements.txt      # Python package versions for the figures
-├── renv/                 # renv - package management for reproducibility
-│   ├── activate.R        # Activates isolated R environment on startup
-│   ├── settings.json     # renv configuration
-│   └── .gitignore        # Ignores library/ (auto-generated on restore)
-├── renv.lock             # Locks exact package versions
-└── .Rprofile             # Auto-activates renv
-</pre>
+This saves Figures 1–2 and S1 (PDF + SVG) to `plots/`.
 
 ## Requirements
 
