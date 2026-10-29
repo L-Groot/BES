@@ -10,3 +10,6 @@ Thumbs.db
 # Python
 .venv/
 __pycache__/
+
+# Manuscript (kept locally, not in the repo)
+main (1).tex
