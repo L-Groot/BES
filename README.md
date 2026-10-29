@@ -35,6 +35,8 @@ Reproducible code for the empirical examples and figures in *"Specifying meaning
 
 ## Reproduce Analyses and Figures
 
+The R commands in steps 1–3 are run inside R (e.g., the R console or RStudio), not in a system terminal. Start R from the project folder so that renv is activated automatically.
+
 **1. Setup the R environment**:
 ```r
 renv::restore()
@@ -60,18 +62,34 @@ tinytex::install_tinytex()
 ```
 
 **4. Create the figures (Python):**
+
+Run these commands in a system terminal from the project folder.
+
+macOS / Linux:
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 python functions/make_figures.py
 ```
-This saves Figures 1–2 and S1 (PDF + SVG) to `figures/`.
+
+Windows (PowerShell or Command Prompt):
+```
+py -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+python functions/make_figures.py
+```
+This saves Figures 1–2 and S1 (PDF + SVG) to `figures/`. Exporting the 3D plots of Figure 2 requires Google Chrome. If Chrome is not installed, run `plotly_get_chrome` once after `pip install` to download a copy.
 
 ## Requirements
 
-- R 4.6.1+
-- Python 3.13+ (for the figures only)
+- R 4.6.1+ (for analyses and reports)
+- Pandoc (for rendering the html and PDF reports; already included in RStudio)
+- A LaTeX distribution, e.g., TinyTeX (for rendering the PDF reports)
+- Rtools on Windows or the Xcode Command Line Tools on macOS (in case `renv::restore()` has to build the locked package versions from source)
+- Python 3.13+ (for figures only)
+- Google Chrome (for figures only, to export the 3D plots of Figure 2)
 
 ## References
 
