@@ -217,7 +217,7 @@ $$
 \qquad
 \mathrm{BF}^{(\text{joint})}_{1,c^*}
 = \frac{\mathrm{BF}^{(\text{joint})}_{1,u}}{\mathrm{BF}^{(\text{joint})}_{c^*,u}}
-\quad \text{(Eq. 10)}
+\quad \text{(Eq. 12)}
 $$
 
 ```{r enumeration}
@@ -230,11 +230,11 @@ res <- compute_joint_complements(
 # Sanity check: BF_1u(joint) / BF_cu(joint) should equal the product of the BF_1c's
 all.equal(res["BES_c", "bf_1u"] / res["BES_c", "bf_cu"], bf_1c)
 
-# BF_1c*(joint) = BF_1u(joint) / BF_c*u(joint) (transitivity, Eq. 10)
+# BF_1c*(joint) = BF_1u(joint) / BF_c*u(joint) (transitivity, Eq. 12)
 bf_1c_star_enumeration <- res["BES_c", "bf_1u"] / res["BES_c_star", "bf_cu_star"]
 ```
 
-## 2: Equal weighting, simplified expression (Eq. 9)
+## 2: Equal weighting, simplified expression (Eq. 11)
 
 - Same quantity as Method 1, algebraically simplified (Appendix A.2) so that the $2^T - 1$ components need not be enumerated.
 - Uses only $\mathrm{BF}_{1,c}^{(t)} = \mathrm{BF}_{1,u}^{(t)} / \mathrm{BF}_{c,u}^{(t)}$: the same information as Method 1, reduced to one ratio per study.
@@ -251,7 +251,7 @@ bf_1c_star_formula_equal <- (2^T - 1) / (prod(1 + 1 / results_df$bf_1c) - 1)
 all.equal(bf_1c_star_formula_equal, bf_1c_star_enumeration)
 ```
 
-## 3: Complexity weighting (Eq. 8)
+## 3: Complexity weighting (Eq. 10)
 
 - Weights each component by its share of the prior mass of the complete complement, $\pi_\Omega = c_\Omega / \bigl(1 - \prod_{t} c_1^{(t)}\bigr)$.
 - Uses $\mathrm{BF}_{1,u}^{(t)}$ and complexities $c_1^{(t)}$.
@@ -283,8 +283,8 @@ knitr::kable(
       "$\\mathrm{BF}_{1,u}^{(\\mathrm{joint})}$",
       "$\\mathrm{BF}_{1,c}^{(\\mathrm{joint})}$",
       "$\\mathrm{BF}_{1,c^*}^{(\\mathrm{joint})}$, equal weighting, enumeration (Eq. 7)",
-      "$\\mathrm{BF}_{1,c^*}^{(\\mathrm{joint})}$, equal weighting, simplified expression (Eq. 9)",
-      "$\\mathrm{BF}_{1,c^*}^{(\\mathrm{joint})}$, complexity weighting (Eq. 8)"
+      "$\\mathrm{BF}_{1,c^*}^{(\\mathrm{joint})}$, equal weighting, simplified expression (Eq. 11)",
+      "$\\mathrm{BF}_{1,c^*}^{(\\mathrm{joint})}$, complexity weighting (Eq. 10)"
     ),
     Value = c(
       formatC(bf_10, format = "e", digits = 3),

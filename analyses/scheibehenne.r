@@ -180,7 +180,7 @@ bf_1c_star_enumeration <- res["BES_c","bf_1u"] / res["BES_c_star","bf_cu_star"] 
 
 
 #----------------------------------------------------------------------------------
-### Compute BF_1c*(joint) by simplified expression w. equal weighting (Eq. 8)
+### Compute BF_1c*(joint) by simplified expression w. equal weighting (Eq. 11)
 
 T <- nrow(final_df)
 numerator <- 2^T - 1
@@ -188,7 +188,7 @@ denominator <- prod(1 + 1/results_df$bf_1c) - 1
 bf_1c_star_formula_equal <- numerator / denominator
 
 #----------------------------------------------------------------------------------
-### Compute BF_1c*(joint) by simplified expression w. complexity weighting (Eq. 9)
+### Compute BF_1c*(joint) by simplified expression w. complexity weighting (Eq. 10)
 
 c1 <- 1 - final_df$P_theta_in_Hc   # complexity c_1^(t) of the predicted hypotheses
 

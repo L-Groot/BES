@@ -125,7 +125,7 @@ res <- compute_joint_complements(table2_ready,
 bf_1c_star_enumeration <- res["BES_c","bf_1u"] / res["BES_c_star","bf_cu_star"] # = BF_1u(joint) / BF_c*u(joint)
 
 #----------------------------------------------------------------------------------
-### Compute BF_1c*(joint) by simplified expression w. equal weighting (Eq. 9)
+### Compute BF_1c*(joint) by simplified expression w. equal weighting (Eq. 11)
 
 # -> BF_1c*(joint) ≈ 7.28 (differs from enumeration due to rounding of the
 #    reported BFs: this expression uses only BF_1c, the others use BF_1u)
@@ -135,7 +135,7 @@ denominator <- prod(1 + 1/results_df$bf_1c) - 1
 bf_1c_star_formula_equal <- numerator / denominator
 
 #----------------------------------------------------------------------------------
-### Compute BF_1c*(joint) by simplified expression w. complexity weighting (Eq. 8)
+### Compute BF_1c*(joint) by simplified expression w. complexity weighting (Eq. 10)
 
 # -> BF_1c*(joint) ≈ 7.24
 c1 <- 1 - table2_ready$P_theta_in_Hc   # complexity c_1^(t) of the predicted hypotheses
@@ -184,7 +184,7 @@ output_lines <- c(
 # Print results
 cat(paste(output_lines, collapse = "\n"), "\n", sep = "")
 
-# With exact inputs, enumeration and Eq. 9 would give identical results,
+# With exact inputs, enumeration and Eq. 11 would give identical results,
 # since both use equal weighting. The difference comes entirely from which of
 # Volker's rounded Bayes factors each method uses. Enumeration (Eq. 7) uses BF_1u's,
-# while Eq. 9 uses BF_1c's.
+# while Eq. 11 uses BF_1c's.

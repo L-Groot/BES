@@ -160,7 +160,7 @@ all.equal(res["BES_c", "bf_1u"] / res["BES_c", "bf_cu"], bf_1c)
 bf_1c_star_enumeration <- res["BES_c", "bf_1u"] / res["BES_c_star", "bf_cu_star"]
 ```
 
-## 2: Complexity weighting (Eq. 8)
+## 2: Complexity weighting (Eq. 10)
 
 - Check: in the special case where $c_1^{(t)} = 0.5$ for all studies,
   the result should equal the one obtained from equal weighting.
@@ -179,7 +179,7 @@ bf_1c_star_formula_complexity <-
     prod(results_df$bf_1u) * (1 - prod(c1)) / (1 - prod(c1 * results_df$bf_1u))
 ```
 
-## 3: Equal weighting, simplified expression (Eq. 9)
+## 3: Equal weighting, simplified expression (Eq. 11)
 
 - Uses only the $\mathrm{BF}_{1,c}^{(t)}$.
 
@@ -198,8 +198,8 @@ bf_1c_star_formula_equal <- (2^T - 1) / (prod(1 + 1 / results_df$bf_1c) - 1)
 knitr::kable(
     data.frame(
         Method = c("Equal weighting, enumeration (Eq. 7)",
-             "Complexity weighting (Eq. 8)",
-             "Equal weighting, simplified expression (Eq. 9)"),
+             "Complexity weighting (Eq. 10)",
+             "Equal weighting, simplified expression (Eq. 11)"),
       `Computed from` = c("$\\mathrm{BF}_{1,u}^{(t)}$",
         "$\\mathrm{BF}_{1,u}^{(t)}$ and $c_1^{(t)}$",
         "$\\mathrm{BF}_{1,c}^{(t)}$"),
@@ -216,19 +216,19 @@ knitr::kable(
 )
 ```
 
-- Enumeration and Eq. 8: `r fmt2(bf_1c_star_enumeration)`; Eq. 9:
+- Enumeration and Eq. 10: `r fmt2(bf_1c_star_enumeration)`; Eq. 11:
   `r fmt2(bf_1c_star_formula_equal)`.
 - The difference comes from *which* rounded Bayes factors each method uses:
     - Enumeration: numerator $\prod_t \mathrm{BF}_{1,u}^{(t)}$; denominator
       $\mathrm{BF}_{c^*,u}^{(\text{joint})} \approx 1$.
-    - Eq. 8: $\mathrm{BF}_{1,u}^{(t)}$.
-    - Eq. 9: $\mathrm{BF}_{1,c}^{(t)}$.
+    - Eq. 10: $\mathrm{BF}_{1,u}^{(t)}$.
+    - Eq. 11: $\mathrm{BF}_{1,c}^{(t)}$.
 
 # Rounding check
 
 - **Goal:** How much of the gap between
   $\mathrm{BF}_{1,u}^{(\text{joint})} = `r fmt2(bf_1u)`$ and
-  $\mathrm{BF}_{1,c^*}^{(\text{joint})} = `r fmt2(bf_1c_star_formula_equal)`$ (Eq. 9)
+  $\mathrm{BF}_{1,c^*}^{(\text{joint})} = `r fmt2(bf_1c_star_formula_equal)`$ (Eq. 11)
   is due to rounding?
 - The two are computed from different columns
   ($\mathrm{BF}_{1,u}$ vs. $\mathrm{BF}_{1,c}$), which Volker rounded separately to 3
@@ -246,12 +246,12 @@ knitr::kable(
       genuine (not due to rounding).
 - **Expectation**
 
-- With $c_1^{(t)} = 0.5$, Eqs. 8 and 9 reduce to
+- With $c_1^{(t)} = 0.5$, Eqs. 10 and 11 reduce to
   $\mathrm{BF}^{(\text{joint})}_{1,c^*} = \mathrm{BF}^{(\text{joint})}_{1,u} \times \text{factor}$,
   where $\text{factor} = (2^T-1)/(2^T-\mathrm{BF}^{(\text{joint})}_{1,u})$.
 
 ```{r expectation}
-# Step 1: ratio BF_1c*(joint) / BF_1u(joint) implied by Eqs. 8 and 9 when c_1 = 0.5
+# Step 1: ratio BF_1c*(joint) / BF_1u(joint) implied by Eqs. 10 and 11 when c_1 = 0.5
 factor <- (2^T - 1) / (2^T - bf_1u)
 
 # Step 2: expected BF_1c*(joint) without rounding
