@@ -111,7 +111,7 @@ fig_1a = draw_study_specific_hypotheses(
     h1_study1=(0.5, 1),   h0_study1=0.5,
     h1_study2=(0.5, 1),   h0_study2=0.5,
     h1_study3=(0.5, 1),   h0_study3=0.5,
-    xlab="Hit rate",
+    xlab=r"Hit rate $\theta$",
     #xticklabel_fontsize=10,
     #xlabel_fontsize=12
 )
@@ -123,7 +123,7 @@ fig_1b = draw_study_specific_hypotheses(
     h1_study1=(-0.0625, 0.0625), h0_study1=0,
     h1_study2=(-0.1, 0.1),       h0_study2=0,
     h1_study3=(-0.2, 0.2),       h0_study3=0,
-    xlab="Mean difference",
+    xlab=r"Mean difference $\Delta$",
     xendsopen=True,
     arrow_height=0.1
 )

@@ -310,7 +310,7 @@ if __name__ == "__main__":
         h0_study2=0.5,
         h1_study3=(0.5, 1),
         h0_study3=0.5,
-        xlab="Hit rate"
+        xlab=r"Hit rate $\theta$"
     )
     plt.show()
 
@@ -325,7 +325,7 @@ if __name__ == "__main__":
         h0_study2=0,
         h1_study3=(-0.2, 0.2),
         h0_study3=0,
-        xlab="Mean difference",
+        xlab=r"Mean difference $\Delta$",
         xendsopen=True,
         arrow_height=0.1,
         infinitexaxis=True
