@@ -6,8 +6,8 @@ Reproducible code for the empirical examples and figures in *"Multiplying Bayes 
 
 <pre>
 ├── analyses/              # Analyses (R Markdown)
-│   ├── scheibehenne.Rmd  # Example 1 (Table 2 in paper)
-│   └── volker.Rmd        # Example 2 (Table 3 in paper)
+│   ├── scheibehenne.Rmd  # Hotel towel reuse (Table 2 in paper)
+│   └── volker.Rmd        # Network embeddedness (Table 3 in paper)
 ├── scheibehenne_original/ # Unmodified materials from Scheibehenne et al. (2016) <a href="https://osf.io/ycx49/">(link to OSF repository)</a>
 │   ├── scheibehenne_original.r   # Original analysis script
 │   └── towelData.csv             # Raw data
