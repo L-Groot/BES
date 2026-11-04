@@ -16,8 +16,9 @@ knitr::opts_chunk$set(echo = TRUE, comment = "")
 
 # Overview
 
-- Computes joint BFs for the set of experiments reported in from Scheibehenne et al. (2016).
+- Computes the joint BFs for the experiments reported in Scheibehenne et al. (2016) (Table 2 in the paper).
 - Source paper: Scheibehenne, B., Jamil, T., & Wagenmakers, E.-J. (2016). Bayesian Evidence Synthesis Can Reconcile Seemingly Inconsistent Results: The Case of Hotel Towel Reuse. Psychological Science, 27(7), 1043-1046.
+- Adapted from the authors' R script and data, available at https://osf.io/ycx49/ (copies in `scheibehenne_original/`).
 - Each experiment is analyzed as one 2x2 contingency table of counts:
   - rows: condition (control, social norm)
   - columns: towel reuse outcome (yes, no)
@@ -198,7 +199,7 @@ bf_1c <- prod(results_df$bf_1c)
 - $\mathrm{BF}_{1,u}^{(\mathrm{joint})} = `r fmt4(bf_1u)`$.
 - $\mathrm{BF}_{1,c}^{(\mathrm{joint})} = `r fmtE(bf_1c)`$.
 
-# BF against complete joint complement
+# BF against the complete joint complement
 
 - The complete complement consists of all $2^T - 1$ components $H_\Omega$ in which the prediction fails in at least one study.
 - Its Bayes factor is a weighted average over these components (Eq. 7).

@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE, comment = "")
 
 # Overview
 
-- Reproduces Table 2 of the paper.
+- Computes the joint BFs for the studies reported in Volker (2022) (Table 3 in the paper).
 - Source: Volker, T. B. (2022). *The future is made today: Concerns for reputation
   foster trust and cooperation* [Unpublished master's thesis]. Utrecht University.
   [PDF](https://github.com/thomvolker/bes_master_thesis_sasr/blob/main/thesis/thesis_volker.pdf)
