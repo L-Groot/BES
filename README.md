@@ -5,15 +5,16 @@ Reproducible code for the empirical examples and figures in *"Multiplying Bayes 
 ## Repository Structure
 
 <pre>
+├── supplement.pdf         # Supplementary Material
 ├── analyses/              # Analyses (R Markdown)
-│   ├── scheibehenne.Rmd  # Hotel towel reuse (Table 2 in paper)
-│   └── volker.Rmd        # Network embeddedness (Table 3 in paper)
+│   ├── scheibehenne.Rmd   # Hotel towel reuse (Table 2 in paper)
+│   └── volker.Rmd         # Network embeddedness (Table 3 in paper)
 ├── scheibehenne_original/ # Unmodified materials from Scheibehenne et al. (2016) <a href="https://osf.io/ycx49/">(link to OSF repository)</a>
 │   ├── scheibehenne_original.r   # Original analysis script
 │   └── towelData.csv             # Raw data
 ├── reports/
-│   ├── html/             # Rendered HTML reports
-│   └── pdf/              # Rendered PDF reports
+│   ├── html/              # Rendered HTML reports
+│   └── pdf/               # Rendered PDF reports
 ├── functions/
 │   ├── compute_joint_complements.r   # Computes joint BFs including complete complement
 │   ├── make_figures.py               # Creates Figures 1–2 and S1
@@ -21,14 +22,17 @@ Reproducible code for the empirical examples and figures in *"Multiplying Bayes 
 │   ├── joint_hypotheses.py           # Figure 2: joint hypotheses
 │   ├── multiple_predicted_hypotheses.py  # Figure S1: multiple predicted hypotheses
 │   └── color_palette.py              # Colorblind-friendly palette for all figures
-├── figures/                # Figures 1–2 and S1 (PDF + SVG)
-├── requirements.txt      # Python package versions for the figures
-├── renv/                 # renv - package management for reproducibility
-│   ├── activate.R        # Activates isolated R environment on startup
-│   ├── settings.json     # renv configuration
-│   └── .gitignore        # Ignores library/ (auto-generated on restore)
-├── renv.lock             # Locks exact package versions
-└── .Rprofile             # Auto-activates renv
+├── figures/               # Figures 1–2 and S1 (PDF + SVG)
+│   ├── figure1/           # Figure 1: study-specific hypotheses
+│   ├── figure2/           # Figure 2: joint hypotheses (panels a–f, plus two extra panels not in the paper)
+│   └── figureS1/          # Figure S1: multiple predicted hypotheses
+├── requirements.txt       # Python package versions for the figures
+├── renv/                  # renv - package management for reproducibility
+│   ├── activate.R         # Activates isolated R environment on startup
+│   ├── settings.json      # renv configuration
+│   └── .gitignore         # Ignores library/ (auto-generated on restore)
+├── renv.lock              # Locks exact package versions
+└── .Rprofile              # Auto-activates renv
 </pre>
 
 ## Reproduce Analyses and Figures
