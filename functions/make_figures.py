@@ -115,7 +115,7 @@ fig_1a = draw_study_specific_hypotheses(
     #xticklabel_fontsize=10,
     #xlabel_fontsize=12
 )
-save_matplotlib(fig_1a, "fig1_A_choice_probabilities")
+save_matplotlib(fig_1a, "fig1_example_A_choice_probabilities")
 
 # B: Equivalence Testing
 fig_1b = draw_study_specific_hypotheses(
@@ -127,7 +127,7 @@ fig_1b = draw_study_specific_hypotheses(
     xendsopen=True,
     arrow_height=0.1
 )
-save_matplotlib(fig_1b, "fig1_B_equivalence_testing")
+save_matplotlib(fig_1b, "fig1_example_B_equivalence_testing")
 
 
 #%%
@@ -151,26 +151,26 @@ CAMERA = dict(
 fig = plot_hypothesis_cube(plot_hc_incomplete=False, plot_hc_complete=False, plot_hu=False)
 fig.update_layout(title="A1: Choice probabilities – H1 only", scene_camera=CAMERA, scene_aspectmode="cube")
 fig.update_yaxes(automargin='left+top')
-save_plotly(fig, "fig2_A1_choice_prob_h1_only", OUT_DIR_FIG2)
-crop_pdf(OUT_DIR_FIG2 / "fig2_A1_choice_prob_h1_only.pdf")
+save_plotly(fig, "fig2_extra_choice_prob_h1_only", OUT_DIR_FIG2)
+crop_pdf(OUT_DIR_FIG2 / "fig2_extra_choice_prob_h1_only.pdf")
 
 # A2: Choice probabilities – H1 + Hu
 fig = plot_hypothesis_cube(plot_hc_incomplete=False, plot_hu=True)
 fig.update_layout(title="A2: Choice probabilities – H1 + Hu", scene_camera=CAMERA, scene_aspectmode="cube")
-save_plotly(fig, "fig2_A2_choice_prob_hu", OUT_DIR_FIG2)
-crop_pdf(OUT_DIR_FIG2 / "fig2_A2_choice_prob_hu.pdf")
+save_plotly(fig, "fig2_a_choice_prob_hu", OUT_DIR_FIG2)
+crop_pdf(OUT_DIR_FIG2 / "fig2_a_choice_prob_hu.pdf")
 
 # A3: Choice probabilities – H1 + incomplete Hc
 fig = plot_hypothesis_cube()
 fig.update_layout(title="A3: Choice probabilities – H1 + incomplete Hc", scene_camera=CAMERA, scene_aspectmode="cube")
-save_plotly(fig, "fig2_A3_choice_prob_incomplete_hc", OUT_DIR_FIG2)
-crop_pdf(OUT_DIR_FIG2 / "fig2_A3_choice_prob_incomplete_hc.pdf")
+save_plotly(fig, "fig2_b_choice_prob_incomplete_hc", OUT_DIR_FIG2)
+crop_pdf(OUT_DIR_FIG2 / "fig2_b_choice_prob_incomplete_hc.pdf")
 
 # A4: Choice probabilities – H1 + complete Hc
 fig = plot_hypothesis_cube(plot_hc_incomplete=False, plot_hc_complete=True)
 fig.update_layout(title="A4: Choice probabilities – H1 + complete Hc", scene_camera=CAMERA, scene_aspectmode="cube")
-save_plotly(fig, "fig2_A4_choice_prob_complete_hc", OUT_DIR_FIG2)
-crop_pdf(OUT_DIR_FIG2 / "fig2_A4_choice_prob_complete_hc.pdf")
+save_plotly(fig, "fig2_c_choice_prob_complete_hc", OUT_DIR_FIG2)
+crop_pdf(OUT_DIR_FIG2 / "fig2_c_choice_prob_complete_hc.pdf")
 
 # B1: Equivalence testing – H1 only
 fig = plot_hypothesis_cube(
@@ -186,8 +186,8 @@ fig = plot_hypothesis_cube(
     plot_hu=False,
 )
 fig.update_layout(title="B1: Equivalence testing – H1 only", scene_camera=CAMERA, scene_aspectmode="cube")
-save_plotly(fig, "fig2_B1_equivalence_h1_only", OUT_DIR_FIG2)
-crop_pdf(OUT_DIR_FIG2 / "fig2_B1_equivalence_h1_only.pdf")
+save_plotly(fig, "fig2_extra_equivalence_h1_only", OUT_DIR_FIG2)
+crop_pdf(OUT_DIR_FIG2 / "fig2_extra_equivalence_h1_only.pdf")
 
 # B2: Equivalence testing – H1 + Hu
 fig = plot_hypothesis_cube(
@@ -202,8 +202,8 @@ fig = plot_hypothesis_cube(
     plot_hu=True,
 )
 fig.update_layout(title="B2: Equivalence testing – H1 + Hu", scene_camera=CAMERA, scene_aspectmode="cube")
-save_plotly(fig, "fig2_B2_equivalence_hu", OUT_DIR_FIG2)
-crop_pdf(OUT_DIR_FIG2 / "fig2_B2_equivalence_hu.pdf")
+save_plotly(fig, "fig2_d_equivalence_hu", OUT_DIR_FIG2)
+crop_pdf(OUT_DIR_FIG2 / "fig2_d_equivalence_hu.pdf")
 
 # B3: Equivalence testing – H1 + incomplete Hc
 fig = plot_hypothesis_cube(
@@ -216,8 +216,8 @@ fig = plot_hypothesis_cube(
     tickvals_z=(-0.2, 0, 0.2),
 )
 fig.update_layout(title="B3: Equivalence testing – H1 + incomplete Hc", scene_camera=CAMERA, scene_aspectmode="cube")
-save_plotly(fig, "fig2_B3_equivalence_incomplete_hc", OUT_DIR_FIG2)
-crop_pdf(OUT_DIR_FIG2 / "fig2_B3_equivalence_incomplete_hc.pdf")
+save_plotly(fig, "fig2_e_equivalence_incomplete_hc", OUT_DIR_FIG2)
+crop_pdf(OUT_DIR_FIG2 / "fig2_e_equivalence_incomplete_hc.pdf")
 
 # B4: Equivalence testing – H1 + complete Hc
 fig = plot_hypothesis_cube(
@@ -232,8 +232,8 @@ fig = plot_hypothesis_cube(
     plot_hc_complete=True,
 )
 fig.update_layout(title="B4: Equivalence testing – H1 + complete Hc", scene_camera=CAMERA, scene_aspectmode="cube")
-save_plotly(fig, "fig2_B4_equivalence_complete_hc", OUT_DIR_FIG2)
-crop_pdf(OUT_DIR_FIG2 / "fig2_B4_equivalence_complete_hc.pdf")
+save_plotly(fig, "fig2_f_equivalence_complete_hc", OUT_DIR_FIG2)
+crop_pdf(OUT_DIR_FIG2 / "fig2_f_equivalence_complete_hc.pdf")
 
 
 #%%
