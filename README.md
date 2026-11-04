@@ -5,11 +5,9 @@ Reproducible code for the empirical examples and figures in *"Multiplying Bayes 
 ## Repository Structure
 
 <pre>
-├── analyses/              # Analysis scripts
-│   ├── scheibehenne.r    # Example 1 (Table 2 in paper)
-│   └── volker.r          # Example 2 (Table 3 in paper)
-│   ├── scheibehenne.Rmd  # Source report for Example 1
-│   └── volker.Rmd        # Source report for Example 2
+├── analyses/              # Analyses (R Markdown)
+│   ├── scheibehenne.Rmd  # Example 1 (Table 2 in paper)
+│   └── volker.Rmd        # Example 2 (Table 3 in paper)
 ├── scheibehenne_original/ # Unmodified materials from Scheibehenne et al. (2016) <a href="https://osf.io/ycx49/">(link to OSF repository)</a>
 │   ├── scheibehenne_original.r   # Original analysis script
 │   └── towelData.csv             # Raw data
@@ -35,7 +33,7 @@ Reproducible code for the empirical examples and figures in *"Multiplying Bayes 
 
 ## Reproduce Analyses and Figures
 
-The R commands in steps 1–3 are run inside R (e.g., the R console or RStudio), not in a system terminal. Start R from the project folder so that renv is activated automatically.
+The R commands in steps 1–2 are run inside R (e.g., the R console or RStudio), not in a system terminal. Start R from the project folder so that renv is activated automatically.
 
 **1. Setup the R environment**:
 ```r
@@ -43,13 +41,7 @@ renv::restore()
 ```
 This command installs the exact versions of all required packages that were used to produce the results in the paper. Therefore, you can clone this repo and reproduce the results with identical package versions, regardless of what is currently installed on your system.
 
-**2. Run the analyses:**
-```r
-source("analyses/scheibehenne.r")   # Example 1: hotel towel reuse
-source("analyses/volker.r")         # Example 2: network embeddedness
-```
-
-**3. Render the reports (HTML + PDF):**
+**2. Run the analyses and render the reports (HTML + PDF):**
 ```r
 rmarkdown::render("analyses/scheibehenne.Rmd", output_format = "html_document", output_dir = "reports/html")
 rmarkdown::render("analyses/scheibehenne.Rmd", output_format = "pdf_document", output_dir = "reports/pdf")
@@ -61,7 +53,7 @@ If PDF rendering fails because no LaTeX distribution is available, install TinyT
 tinytex::install_tinytex()
 ```
 
-**4. Create the figures (Python):**
+**3. Create the figures (Python):**
 
 Run these commands in a system terminal from the project folder.
 
