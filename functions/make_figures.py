@@ -184,6 +184,7 @@ fig = plot_hypothesis_cube(
     plot_hc_incomplete=False,
     plot_hc_complete=False,
     plot_hu=False,
+    symbol="Δ",
 )
 fig.update_layout(title="B1: Equivalence testing – H1 only", scene_camera=CAMERA, scene_aspectmode="cube")
 save_plotly(fig, "fig2_extra_equivalence_h1_only", OUT_DIR_FIG2)
@@ -200,6 +201,7 @@ fig = plot_hypothesis_cube(
     tickvals_z=(-0.2, 0, 0.2),
     plot_hc_incomplete=False,
     plot_hu=True,
+    symbol="Δ",
 )
 fig.update_layout(title="B2: Equivalence testing – H1 + Hu", scene_camera=CAMERA, scene_aspectmode="cube")
 save_plotly(fig, "fig2_d_equivalence_hu", OUT_DIR_FIG2)
@@ -214,6 +216,7 @@ fig = plot_hypothesis_cube(
     tickvals_x=( -0.0625, 0, 0.0625),
     tickvals_y=(-0.1, 0, 0.1),
     tickvals_z=(-0.2, 0, 0.2),
+    symbol="Δ",
 )
 fig.update_layout(title="B3: Equivalence testing – H1 + incomplete Hc", scene_camera=CAMERA, scene_aspectmode="cube")
 save_plotly(fig, "fig2_e_equivalence_incomplete_hc", OUT_DIR_FIG2)
@@ -230,6 +233,7 @@ fig = plot_hypothesis_cube(
     tickvals_z=(-0.2, 0, 0.2),
     plot_hc_incomplete=False,
     plot_hc_complete=True,
+    symbol="Δ",
 )
 fig.update_layout(title="B4: Equivalence testing – H1 + complete Hc", scene_camera=CAMERA, scene_aspectmode="cube")
 save_plotly(fig, "fig2_f_equivalence_complete_hc", OUT_DIR_FIG2)

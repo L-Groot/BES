@@ -297,6 +297,7 @@ def plot_hypothesis_cube(
     plot_hc_complete: bool = False,
     plot_h0: bool = True,
     plot_hu: bool = False,
+    symbol: str = "θ",
 ) -> go.Figure:
     if plot_hc_incomplete and plot_hc_complete:
         raise ValueError("Can't plot both incomplete AND complete Hc in one plot")
@@ -373,13 +374,25 @@ def plot_hypothesis_cube(
         "color": "black",
     }
 
+    # Annotations outside the axis range are clipped, so anchor them just inside the cube edges and offset in pixels.
+    lo, hi = xmin - buffer, xmax + buffer
+    lo_in, hi_in = lo + 0.01 * (hi - lo), hi - 0.01 * (hi - lo)
+    mid = (xmin + xmax) / 2
+    annotation_base = {"showarrow": False, "font": axis_title_font, "xanchor": "center", "yanchor": "middle"}
+    axis_label_annotations = [
+        {**annotation_base, "x": mid, "y": lo_in, "z": xmin, "xshift": 45, "yshift": -55, "text": f"{symbol}<sup>(1)</sup>"},
+        {**annotation_base, "x": lo_in, "y": mid, "z": xmin, "xshift": -40, "yshift": -50, "text": f"{symbol}<sup>(2)</sup>"},
+        {**annotation_base, "x": lo_in, "y": hi_in, "z": mid, "xshift": -50, "text": f"{symbol}<sup>(3)</sup>"},
+    ]
+
     fig.update_layout(
         title=title,
         scene={
             "aspectmode": "cube",
+            "annotations": axis_label_annotations,
             "xaxis": {
-                "title": {"text": "θ₁", "font": axis_title_font},
-                "range": [xmin - buffer, xmax + buffer],
+                "title": {"text": ""},
+                "range": [lo, hi],
                 "tickvals": list(tickvals_x),
                 "tickmode": "array",
                 "gridcolor": "lightgray",
@@ -387,8 +400,8 @@ def plot_hypothesis_cube(
                 "zeroline": False,
             },
             "yaxis": {
-                "title": {"text": "θ₂", "font": axis_title_font},
-                "range": [xmin - buffer, xmax + buffer],
+                "title": {"text": ""},
+                "range": [lo, hi],
                 "tickvals": list(tickvals_y),
                 "tickmode": "array",
                 "gridcolor": "lightgray",
@@ -396,7 +409,7 @@ def plot_hypothesis_cube(
                 "zeroline": False,
             },
             "zaxis": {
-                "title": {"text": "θ₃", "font": axis_title_font},
+                "title": {"text": ""},
                 "range": [xmin, xmax],
                 "tickvals": list(tickvals_z),
                 "tickmode": "array",
